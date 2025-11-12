@@ -28,6 +28,14 @@
                         {% endif %}
                         <small class="form-text text-muted">{% trans "请输入准确的公司名称，需与系统中已有公司匹配" %}</small>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "国家 *" %}</label>
+                        {{ form.country }}
+                        {% if form.country.errors %}
+                            <div class="text-danger">{{ form.country.errors }}</div>
+                        {% endif %}
+                    </div>
                     
                     <div class="mb-3">
                         <label class="form-label">{% trans "姓名 *" %}</label>

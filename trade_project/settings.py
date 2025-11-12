@@ -148,4 +148,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     import dj_database_url
-    DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
+    DATABASES['default'] = dj_database_url.config(default=DATABASE_URL, conn_max_age=600, ssl_require=True)
+if not DATABASE_URL and os.environ.get('VERCEL'):
+    if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+        import os as _os
+        DATABASES['default']['NAME'] = _os.path.join('/tmp', 'db.sqlite3')
+CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
