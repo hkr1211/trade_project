@@ -155,3 +155,4 @@ if not DATABASE_URL and os.environ.get('VERCEL'):
         DATABASES['default']['NAME'] = _os.path.join('/tmp', 'db.sqlite3')
 CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
