@@ -407,9 +407,18 @@ def buyer_register(request):
                         is_active=False  # 设为不活跃，等待审批
                     )
                     
+                    # 获取或创建公司记录
+                    company, _ = Company.objects.get_or_create(
+                        company_name=form.cleaned_data['company_name'],
+                        defaults={
+                            'country': form.cleaned_data.get('country', ''),
+                            'is_active': True
+                        }
+                    )
+
                     # 创建联系人记录
                     contact = Contact.objects.create(
-                        company=form.cleaned_data['company'],
+                        company=company,
                         user=user,
                         name=form.cleaned_data['name'],
                         position=form.cleaned_data.get('position', ''),
