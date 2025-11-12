@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-tvc%m0j60@st3kjl2_s-p+!zf4id*wesls3ne%*%q9vjdj#h9b')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'false').lower() == 'true'
 
 # 允许本地和局域网访问（开发环境）
 ALLOWED_HOSTS = ['*']
@@ -146,9 +146,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and ('supabase.co' in DATABASE_URL) and (':5432/' in DATABASE_URL):
+    DATABASE_URL = DATABASE_URL.replace(':5432/', ':6543/')
 if DATABASE_URL:
     import dj_database_url
     DATABASES['default'] = dj_database_url.config(default=DATABASE_URL, conn_max_age=600, ssl_require=True)
+    DATABASES['default'].setdefault('OPTIONS', {})
+    DATABASES['default']['OPTIONS'].setdefault('connect_timeout', 10)
 if not DATABASE_URL and os.environ.get('VERCEL'):
     if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
         import os as _os

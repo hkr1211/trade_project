@@ -8,6 +8,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import JsonResponse
+from django.db.utils import OperationalError
+from django.db import connection
 
 from .models import Company, Contact, Inquiry, InquiryItem, Order, OrderItem, OrderAttachment
 from .forms import (
@@ -443,29 +445,28 @@ def buyer_login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
-        # 使用邮箱作为用户名登录
-        user = authenticate(request, username=email, password=password)
-        
-        if user is not None:
-            # 检查审批状态
-            try:
-                contact = Contact.objects.get(user=user)
-                if contact.approval_status != 'approved':
-                    if contact.approval_status == 'pending':
-                        messages.warning(request, '您的账号正在等待管理员审批，请耐心等待。')
-                    else:
-                        messages.error(request, f'您的账号已被拒绝。原因：{contact.rejection_reason}')
+        try:
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                try:
+                    contact = Contact.objects.get(user=user)
+                    if contact.approval_status != 'approved':
+                        if contact.approval_status == 'pending':
+                            messages.warning(request, '您的账号正在等待管理员审批，请耐心等待。')
+                        else:
+                            messages.error(request, f'您的账号已被拒绝。原因：{contact.rejection_reason}')
+                        return redirect('buyer_login')
+                except Contact.DoesNotExist:
+                    messages.error(request, _('该账号不是有效的买家账号。'))
                     return redirect('buyer_login')
-            except Contact.DoesNotExist:
-                messages.error(request, _('该账号不是有效的买家账号。'))
-                return redirect('buyer_login')
-            
-            login(request, user)
-            messages.success(request, _('欢迎回来，%(name)s！') % {'name': contact.name})
-            return redirect('buyer_dashboard')
-        else:
-            messages.error(request, _('邮箱或密码错误。'))
+                login(request, user)
+                messages.success(request, _('欢迎回来，%(name)s！') % {'name': contact.name})
+                return redirect('buyer_dashboard')
+            else:
+                messages.error(request, _('邮箱或密码错误。'))
+        except OperationalError:
+            messages.error(request, _('数据库连接失败，请稍后再试。'))
+            return render(request, 'orders/buyer_login.html')
     
     return render(request, 'orders/buyer_login.html')
 
@@ -503,6 +504,13 @@ def buyer_dashboard(request):
     }
     
     return render(request, 'orders/buyer_dashboard.html', context)
+
+def health_db(request):
+    try:
+        connection.ensure_connection()
+        return JsonResponse({'ok': True})
+    except Exception as e:
+        return JsonResponse({'ok': False, 'error': str(e)}, status=500)
 
 
 # ==================== 我的询单列表 ====================
