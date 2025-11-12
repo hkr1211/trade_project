@@ -1,0 +1,87 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "首页" %} - {% trans "外贸询单订单系统" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto text-center">
+        <h1 class="display-4 mb-4">{% trans "欢迎使用外贸询单订单系统" %}</h1>
+        <p class="lead mb-5">{% trans "便捷的B2B询价和订单管理平台" %}</p>
+        
+        <!-- 买家和供应商选择 -->
+        <div class="row mb-5">
+            <!-- 买家区域 -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center py-5">
+                        <h2 class="mb-4">👤 {% trans "买家登录" %}</h2>
+                        <p class="text-muted mb-4">{% trans "采购商、客户登录入口" %}</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'buyer_login' %}" class="btn btn-primary btn-lg">{% trans "买家登录" %}</a>
+                            <a href="{% url 'buyer_register' %}" class="btn btn-outline-primary">{% trans "买家注册" %}</a>
+                        </div>
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                <strong>{% trans "买家功能：" %}</strong><br>
+                                {% trans "提交询单、查看报价、创建订单、跟踪订单状态" %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 供应商区域 -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center py-5">
+                        <h2 class="mb-4">🏢 {% trans "供应商登录" %}</h2>
+                        <p class="text-muted mb-4">{% trans "蕴杰金属供应商登录入口" %}</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'supplier_login' %}" class="btn btn-success btn-lg">{% trans "供应商登录" %}</a>
+                            <a href="{% url 'supplier_register' %}" class="btn btn-outline-success">{% trans "供应商注册" %}</a>
+                        </div>
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                <strong>{% trans "供应商功能：" %}</strong><br>
+                                {% trans "查看询单、提供报价、处理订单、更新订单状态" %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 系统功能介绍 -->
+        <div class="mt-5">
+            <h4 class="mb-4">{% trans "系统功能" %}</h4>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">📝 {% trans "询单管理" %}</h5>
+                            <p class="card-text">{% trans "提交询价单，上传图纸，查看供应商报价" %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">📦 {% trans "订单跟踪" %}</h5>
+                            <p class="card-text">{% trans "创建订单，实时查看订单状态和物流信息" %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">🌐 {% trans "多语言支持" %}</h5>
+                            <p class="card-text">{% trans "支持中文、英语、日语三种语言" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

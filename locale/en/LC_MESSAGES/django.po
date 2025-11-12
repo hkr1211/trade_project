@@ -1,0 +1,300 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: foreign_trade_system\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-11 00:00+0000\n"
+"PO-Revision-Date: 2025-11-11 00:00+0000\n"
+"Last-Translator: Auto-generated\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Common
+msgid "中文"
+msgstr "Chinese"
+
+msgid "日本語"
+msgstr "Japanese"
+
+# Buyer Login
+msgid "买家登录"
+msgstr "Buyer Login"
+
+msgid "邮箱"
+msgstr "Email"
+
+msgid "密码"
+msgstr "Password"
+
+msgid "登录"
+msgstr "Sign In"
+
+msgid "还没有账号？"
+msgstr "Don't have an account?"
+
+msgid "立即注册"
+msgstr "Register Now"
+
+# Supplier Inquiry Detail
+msgid "询单详情"
+msgstr "Inquiry Detail"
+
+msgid "返回列表"
+msgstr "Back to List"
+
+msgid "询单信息"
+msgstr "Inquiry Info"
+
+msgid "询单号："
+msgstr "Inquiry No.:"
+
+msgid "客户："
+msgstr "Customer:"
+
+msgid "状态："
+msgstr "Status:"
+
+msgid "待报价"
+msgstr "Pending Quote"
+
+msgid "已报价"
+msgstr "Quoted"
+
+msgid "已接受"
+msgstr "Accepted"
+
+msgid "创建时间："
+msgstr "Created At:"
+
+msgid "客户交货期要求："
+msgstr "Customer Delivery Requirement:"
+
+msgid "未填写"
+msgstr "Not Provided"
+
+msgid "客户备注："
+msgstr "Customer Notes:"
+
+msgid "无"
+msgstr "None"
+
+msgid "产品明细"
+msgstr "Items"
+
+msgid "产品名称"
+msgstr "Product Name"
+
+msgid "材料"
+msgstr "Material"
+
+msgid "牌号"
+msgstr "Grade"
+
+msgid "数量"
+msgstr "Quantity"
+
+msgid "单位"
+msgstr "Unit"
+
+msgid "技术规格"
+msgstr "Specifications"
+
+msgid "图纸"
+msgstr "Drawing"
+
+msgid "下载"
+msgstr "Download"
+
+msgid "暂无明细项"
+msgstr "No items"
+
+msgid "报价操作"
+msgstr "Quotation"
+
+msgid "预计交货期"
+msgstr "Estimated Lead Time"
+
+msgid "例如：7-10 天"
+msgstr "e.g., 7-10 days"
+
+msgid "供应商备注"
+msgstr "Supplier Notes"
+
+msgid "提交报价"
+msgstr "Submit Quote"
+
+msgid "取消"
+msgstr "Cancel"
+
+# Inquiry Create
+msgid "创建询单"
+msgstr "Create Inquiry"
+
+msgid "删除"
+msgstr "Remove"
+
+msgid "材料名称"
+msgstr "Material Name"
+
+msgid "材料牌号"
+msgstr "Material Grade"
+
+msgid "技术规格"
+msgstr "Technical Specifications"
+
+msgid "图纸文件"
+msgstr "Drawing File"
+
+msgid "支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式"
+msgstr "Supported formats: PDF, JPG, PNG, DWG, DXF, PPT, DOC"
+
+msgid "添加产品"
+msgstr "Add Item"
+
+msgid "基本信息"
+msgstr "Basic Info"
+
+msgid "交货期（天）"
+msgstr "Delivery (days)"
+
+msgid "备注"
+msgstr "Notes"
+
+msgid "附件上传（可选）"
+msgstr "Attachments (optional)"
+
+msgid "上传多个文件"
+msgstr "Upload multiple files"
+
+msgid "可以一次选择多个文件上传，支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式，单个文件最大 20MB"
+msgstr "You can select multiple files; supported: PDF, JPG, PNG, DWG, DXF, PPT, DOC; max 20MB each"
+
+msgid "提交询单"
+msgstr "Submit Inquiry"
+
+msgid "找不到表单模板"
+msgstr "Form template not found"
+
+msgid "至少需要保留一个产品"
+msgstr "At least one item is required"
+msgid "我的仪表板"
+msgstr "My Dashboard"
+
+msgid "欢迎回来"
+msgstr "Welcome back"
+
+msgid "询单总数"
+msgstr "Total Inquiries"
+
+msgid "查看全部"
+msgstr "View All"
+
+# existing: 待报价
+# msgid "待报价" already present if used; include for safety
+msgid "待报价"
+msgstr "Pending Quote"
+
+msgid "订单总数"
+msgstr "Total Orders"
+
+msgid "待确认订单"
+msgstr "Pending Orders"
+
+msgid "最近询单"
+msgstr "Recent Inquiries"
+
+msgid "新建询单"
+msgstr "New Inquiry"
+
+msgid "暂无询单"
+msgstr "No inquiries yet"
+
+msgid "最近订单"
+msgstr "Recent Orders"
+
+msgid "新建订单"
+msgstr "New Order"
+
+msgid "暂无订单"
+msgstr "No orders yet"
+msgid "首页"
+msgstr "Home"
+
+msgid "外贸询单订单系统"
+msgstr "Foreign Trade Inquiry & Order System"
+
+msgid "外贸询单系统"
+msgstr "Foreign Trade Inquiry System"
+
+msgid "欢迎使用外贸询单订单系统"
+msgstr "Welcome to the Foreign Trade Inquiry & Order System"
+
+msgid "便捷的B2B询价和订单管理平台"
+msgstr "A convenient B2B quoting and order management platform"
+
+msgid "采购商、客户登录入口"
+msgstr "Entry for purchasers and customers"
+
+msgid "买家注册"
+msgstr "Buyer Register"
+
+msgid "买家功能："
+msgstr "Buyer Features:"
+
+msgid "提交询单、查看报价、创建订单、跟踪订单状态"
+msgstr "Submit inquiries, view quotes, create orders, track order status"
+
+msgid "供应商登录"
+msgstr "Supplier Login"
+
+msgid "蕴杰金属供应商登录入口"
+msgstr "Wenjie Metals supplier login entry"
+
+msgid "供应商注册"
+msgstr "Supplier Register"
+
+msgid "供应商功能："
+msgstr "Supplier Features:"
+
+msgid "查看询单、提供报价、处理订单、更新订单状态"
+msgstr "View inquiries, provide quotes, process orders, update order status"
+
+msgid "系统功能"
+msgstr "System Features"
+
+msgid "订单跟踪"
+msgstr "Order Tracking"
+
+msgid "创建订单，实时查看订单状态和物流信息"
+msgstr "Create orders, view order status and logistics in real time"
+
+msgid "支持中文、英语、日语三种语言"
+msgstr "Supports Chinese, English, and Japanese"
+
+msgid "您已成功登出。"
+msgstr "You have successfully logged out."
+
+# Buyer nav labels
+msgid "我的询单"
+msgstr "My Inquiries"
+
+msgid "我的订单"
+msgstr "My Orders"
+
+# Missing nav and home feature translations
+msgid "买家入口"
+msgstr "Buyer Entry"
+
+msgid "供应商入口"
+msgstr "Supplier Entry"
+
+msgid "询单管理"
+msgstr "Inquiry Management"
+
+msgid "多语言支持"
+msgstr "Multilingual Support"
+
+msgid "提交询价单，上传图纸，查看供应商报价"
+msgstr "Submit inquiries, upload drawings, view supplier quotes"

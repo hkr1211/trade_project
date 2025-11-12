@@ -1,0 +1,52 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}{% trans "供应商登录" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">🏢 {% trans "供应商登录" %}</h4>
+                <form action="{% url 'set_language' %}" method="post" class="d-flex">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="zh-hans" {% if LANGUAGE_CODE == 'zh-hans' %}selected{% endif %}>{% trans "中文" %}</option>
+                        <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+                        <option value="ja" {% if LANGUAGE_CODE == 'ja' %}selected{% endif %}>{% trans "日本語" %}</option>
+                    </select>
+                </form>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">{% trans "宝鸡蕴杰金属制品有限公司供应商入口" %}</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">{% trans "邮箱" %}</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">{% trans "密码" %}</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">{% trans "登录" %}</button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <p class="text-center mb-0">
+                    {% trans "还没有账号？" %}<a href="{% url 'supplier_register' %}">{% trans "立即注册" %}</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

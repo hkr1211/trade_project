@@ -1,0 +1,186 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "创建询单" %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% trans "创建询单" %}</h2>
+    <a href="{% url 'inquiry_list' %}" class="btn btn-outline-secondary">{% trans "返回列表" %}</a>
+ </div>
+
+<form method="post" enctype="multipart/form-data" id="inquiryForm">
+    {% csrf_token %}
+    
+    <!-- {% trans "产品明细（移到顶部）" %} -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">{% trans "产品明细" %}</h5>
+        </div>
+        <div class="card-body">
+            {{ formset.management_form }}
+            <div id="item-formset">
+                {% for item_form in formset %}
+                    <div class="item-form border p-3 mb-3 position-relative">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-item" style="display: none;">{% trans "删除" %}</button>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{% trans "产品名称" %} *</label>
+                                {{ item_form.product_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{% trans "材料名称" %} *</label>
+                                {{ item_form.material_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{% trans "材料牌号" %}</label>
+                                {{ item_form.material_grade }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{% trans "数量" %} *</label>
+                                {{ item_form.quantity }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{% trans "单位" %}</label>
+                                {{ item_form.unit }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{% trans "技术规格" %}</label>
+                            {{ item_form.specifications }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{% trans "图纸文件" %}</label>
+                            {{ item_form.drawing_file }}
+                            <small class="form-text text-muted">{% trans "支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式" %}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <button type="button" class="btn btn-outline-primary" id="add-item">+ {% trans "添加产品" %}</button>
+        </div>
+    </div>
+
+    <!-- {% trans "基本信息（移到下面）" %} -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">{% trans "基本信息" %}</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">{% trans "交货期（天）" %}</label>
+                {{ form.delivery_requirement }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{% trans "备注" %}</label>
+                {{ form.customer_notes }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- {% trans "附件上传" %} -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">{% trans "附件上传（可选）" %}</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">{% trans "上传多个文件" %}</label>
+                <input type="file" class="form-control" name="attachments" multiple>
+                <small class="form-text text-muted">{% trans "可以一次选择多个文件上传，支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式，单个文件最大 20MB" %}</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-lg px-5">{% trans "提交询单" %}</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 动态添加/删除产品明细
+let formCount = parseInt('{{ formset.total_form_count }}') || 1;
+
+document.getElementById('add-item').addEventListener('click', function() {
+    const formset = document.getElementById('item-formset');
+    const firstForm = document.querySelector('.item-form');
+    
+    if (!firstForm) {
+        console.error(gettext('找不到表单模板'));
+        return;
+    }
+    
+    const newForm = firstForm.cloneNode(true);
+    
+    // 更新表单索引
+    const regex0 = /form-0-/g;
+    const regex1 = /form-0/g;
+    const regexBracket = /\[0\]/g;
+    
+    newForm.innerHTML = newForm.innerHTML.replace(regex0, 'form-' + formCount + '-');
+    newForm.innerHTML = newForm.innerHTML.replace(regex1, 'form-' + formCount);
+    newForm.innerHTML = newForm.innerHTML.replace(regexBracket, '[' + formCount + ']');
+    
+    // 清空输入值
+    newForm.querySelectorAll('input, textarea, select').forEach(input => {
+        if (input.type === 'file') {
+            input.value = '';
+        } else if (input.type !== 'hidden' && !input.name.includes('TOTAL_FORMS') && !input.name.includes('INITIAL_FORMS')) {
+            input.value = '';
+        }
+    });
+    
+    // 显示删除按钮
+    const removeBtn = newForm.querySelector('.remove-item');
+    if (removeBtn) {
+        removeBtn.style.display = 'block';
+    }
+    
+    formset.appendChild(newForm);
+    formCount++;
+    
+    // 更新 TOTAL_FORMS
+    const totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
+    if (totalFormsInput) {
+        totalFormsInput.value = formCount;
+    }
+});
+
+// 删除产品明细
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-item')) {
+        const forms = document.querySelectorAll('.item-form');
+        if (forms.length > 1) {
+            e.target.closest('.item-form').remove();
+            formCount--;
+            const totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
+            if (totalFormsInput) {
+                totalFormsInput.value = formCount;
+            }
+        } else {
+            alert(gettext('至少需要保留一个产品'));
+        }
+    }
+});
+
+// 初始化：如果只有一个表单，隐藏删除按钮
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.item-form');
+    if (forms.length === 1) {
+        const removeBtn = forms[0].querySelector('.remove-item');
+        if (removeBtn) {
+            removeBtn.style.display = 'none';
+        }
+    }
+});
+</script>
+{% endblock %}

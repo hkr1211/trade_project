@@ -1,0 +1,298 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: foreign_trade_system\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-11 00:00+0000\n"
+"PO-Revision-Date: 2025-11-11 00:00+0000\n"
+"Last-Translator: Auto-generated\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Common
+msgid "中文"
+msgstr "中国語"
+
+msgid "日本語"
+msgstr "日本語"
+
+# Buyer Login
+msgid "买家登录"
+msgstr "バイヤーログイン"
+
+msgid "邮箱"
+msgstr "メールアドレス"
+
+msgid "密码"
+msgstr "パスワード"
+
+msgid "登录"
+msgstr "ログイン"
+
+msgid "还没有账号？"
+msgstr "アカウントをお持ちでない方"
+
+msgid "立即注册"
+msgstr "今すぐ登録"
+
+# Supplier Inquiry Detail
+msgid "询单详情"
+msgstr "問い合わせ詳細"
+
+msgid "返回列表"
+msgstr "一覧へ戻る"
+
+msgid "询单信息"
+msgstr "問い合わせ情報"
+
+msgid "询单号："
+msgstr "問い合わせ番号："
+
+msgid "客户："
+msgstr "顧客："
+
+msgid "状态："
+msgstr "ステータス："
+
+msgid "待报价"
+msgstr "見積り待ち"
+
+msgid "已报价"
+msgstr "見積り済み"
+
+msgid "已接受"
+msgstr "受注済み"
+
+msgid "创建时间："
+msgstr "作成日時："
+
+msgid "客户交货期要求："
+msgstr "顧客希望納期："
+
+msgid "未填写"
+msgstr "未記入"
+
+msgid "客户备注："
+msgstr "顧客メモ："
+
+msgid "无"
+msgstr "なし"
+
+msgid "产品明细"
+msgstr "製品明細"
+
+msgid "产品名称"
+msgstr "製品名"
+
+msgid "材料"
+msgstr "材質"
+
+msgid "牌号"
+msgstr "グレード"
+
+msgid "数量"
+msgstr "数量"
+
+msgid "单位"
+msgstr "単位"
+
+msgid "技术规格"
+msgstr "技術仕様"
+
+msgid "图纸"
+msgstr "図面"
+
+msgid "下载"
+msgstr "ダウンロード"
+
+msgid "暂无明细项"
+msgstr "明細はありません"
+
+msgid "报价操作"
+msgstr "見積り操作"
+
+msgid "预计交货期"
+msgstr "想定納期"
+
+msgid "例如：7-10 天"
+msgstr "例：7～10日"
+
+msgid "供应商备注"
+msgstr "サプライヤーメモ"
+
+msgid "提交报价"
+msgstr "見積り送信"
+
+msgid "取消"
+msgstr "キャンセル"
+
+# Inquiry Create
+msgid "创建询单"
+msgstr "問い合わせ作成"
+
+msgid "删除"
+msgstr "削除"
+
+msgid "材料名称"
+msgstr "材質名"
+
+msgid "材料牌号"
+msgstr "材質グレード"
+
+msgid "技术规格"
+msgstr "技術仕様"
+
+msgid "图纸文件"
+msgstr "図面ファイル"
+
+msgid "支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式"
+msgstr "対応形式：PDF、JPG、PNG、DWG、DXF、PPT、DOC"
+
+msgid "添加产品"
+msgstr "製品追加"
+
+msgid "基本信息"
+msgstr "基本情報"
+
+msgid "交货期（天）"
+msgstr "納期（日）"
+
+msgid "备注"
+msgstr "備考"
+
+msgid "附件上传（可选）"
+msgstr "添付ファイル（任意）"
+
+msgid "上传多个文件"
+msgstr "複数ファイルをアップロード"
+
+msgid "可以一次选择多个文件上传，支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式，单个文件最大 20MB"
+msgstr "複数選択可能。対応形式：PDF、JPG、PNG、DWG、DXF、PPT、DOC。最大20MB/ファイル"
+
+msgid "提交询单"
+msgstr "問い合わせ送信"
+
+msgid "找不到表单模板"
+msgstr "フォームテンプレートが見つかりません"
+
+msgid "至少需要保留一个产品"
+msgstr "少なくとも1件の明細が必要です"
+msgid "我的仪表板"
+msgstr "マイダッシュボード"
+
+msgid "欢迎回来"
+msgstr "お帰りなさい"
+
+msgid "询单总数"
+msgstr "見積依頼の総数"
+
+msgid "查看全部"
+msgstr "すべて表示"
+
+msgid "待报价"
+msgstr "見積待ち"
+
+msgid "订单总数"
+msgstr "注文総数"
+
+msgid "待确认订单"
+msgstr "確認待ちの注文"
+
+msgid "最近询单"
+msgstr "最近の見積依頼"
+
+msgid "新建询单"
+msgstr "見積依頼を作成"
+
+msgid "暂无询单"
+msgstr "見積依頼はまだありません"
+
+msgid "最近订单"
+msgstr "最近の注文"
+
+msgid "新建订单"
+msgstr "注文を作成"
+
+msgid "暂无订单"
+msgstr "注文はまだありません"
+msgid "首页"
+msgstr "ホーム"
+
+msgid "外贸询单订单系统"
+msgstr "外貿見積・受注システム"
+
+msgid "外贸询单系统"
+msgstr "外貿見積システム"
+
+msgid "欢迎使用外贸询单订单系统"
+msgstr "外貿見積・受注システムへようこそ"
+
+msgid "便捷的B2B询价和订单管理平台"
+msgstr "便利なB2B見積・受注管理プラットフォーム"
+
+msgid "采购商、客户登录入口"
+msgstr "購買担当・顧客のログイン入口"
+
+msgid "买家注册"
+msgstr "バイヤー登録"
+
+msgid "买家功能："
+msgstr "バイヤー機能："
+
+msgid "提交询单、查看报价、创建订单、跟踪订单状态"
+msgstr "見積依頼の提出、見積確認、注文作成、注文状況の追跡"
+
+msgid "供应商登录"
+msgstr "サプライヤーログイン"
+
+msgid "蕴杰金属供应商登录入口"
+msgstr "蘊杰金属サプライヤーのログイン入口"
+
+msgid "供应商注册"
+msgstr "サプライヤー登録"
+
+msgid "供应商功能："
+msgstr "サプライヤー機能："
+
+msgid "查看询单、提供报价、处理订单、更新订单状态"
+msgstr "見積依頼の確認、見積提示、注文処理、注文状況の更新"
+
+msgid "系统功能"
+msgstr "システム機能"
+
+msgid "订单跟踪"
+msgstr "注文追跡"
+
+msgid "创建订单，实时查看订单状态和物流信息"
+msgstr "注文作成、注文状況と物流情報をリアルタイムで確認"
+
+msgid "支持中文、英语、日语三种语言"
+msgstr "中国語・英語・日本語の3言語に対応"
+
+msgid "您已成功登出。"
+msgstr "ログアウトしました。"
+
+# Buyer nav labels
+msgid "我的询单"
+msgstr "私の見積依頼"
+
+msgid "我的订单"
+msgstr "私の注文"
+
+# Missing nav and home feature translations
+msgid "买家入口"
+msgstr "バイヤー入口"
+
+msgid "供应商入口"
+msgstr "サプライヤー入口"
+
+msgid "询单管理"
+msgstr "見積依頼管理"
+
+msgid "多语言支持"
+msgstr "多言語サポート"
+
+msgid "提交询价单，上传图纸，查看供应商报价"
+msgstr "見積依頼の提出、図面のアップロード、サプライヤー見積の確認"

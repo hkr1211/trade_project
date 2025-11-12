@@ -1,0 +1,206 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "询单详情" %} - {{ inquiry.inquiry_number }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% trans "询单详情" %}</h2>
+    <a href="{% url 'inquiry_list' %}" class="btn btn-outline-secondary">{% trans "返回列表" %}</a>
+</div>
+
+<!-- {% trans "询单基本信息" %} -->
+<div class="card mb-3">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">{% trans "询单信息" %}</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <strong>{% trans "询单号：" %}</strong><br>
+                {{ inquiry.inquiry_number }}
+            </div>
+            <div class="col-md-3">
+                <strong>{% trans "状态：" %}</strong><br>
+                {% if inquiry.status == 'pending' %}
+                    <span class="badge bg-warning">{{ inquiry.get_status_display }}</span>
+                {% elif inquiry.status == 'quoted' %}
+                    <span class="badge bg-info">{{ inquiry.get_status_display }}</span>
+                {% elif inquiry.status == 'accepted' %}
+                    <span class="badge bg-success">{{ inquiry.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ inquiry.get_status_display }}</span>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <strong>{% trans "创建时间：" %}</strong><br>
+                {{ inquiry.created_at|date:"Y-m-d H:i" }}
+            </div>
+            <div class="col-md-3">
+                <strong>{% trans "更新时间：" %}</strong><br>
+                {{ inquiry.updated_at|date:"Y-m-d H:i" }}
+            </div>
+        </div>
+        
+        {% if inquiry.delivery_requirement %}
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>{% trans "交货期要求：" %}</strong>
+                    <p>{{ inquiry.delivery_requirement }}</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        {% if inquiry.customer_notes %}
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>{% trans "客户备注：" %}</strong>
+                    <p>{{ inquiry.customer_notes }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- {% trans "供应商报价信息" %} -->
+{% if inquiry.status == 'quoted' or inquiry.status == 'accepted' %}
+<div class="card mb-3">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">{% trans "供应商报价" %}</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <strong>{% trans "报工期：" %}</strong><br>
+                {{ inquiry.quoted_lead_time|default:"-" }}
+            </div>
+            <div class="col-md-4">
+                <strong>{% trans "报价时间：" %}</strong><br>
+                {{ inquiry.quoted_at|date:"Y-m-d H:i"|default:"-" }}
+            </div>
+            <div class="col-md-4">
+                <strong>{% trans "报价总额：" %}</strong><br>
+                <h4 class="text-success">${{ inquiry.total_amount|floatformat:2 }}</h4>
+            </div>
+        </div>
+        
+        {% if inquiry.supplier_notes %}
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>{% trans "供应商备注：" %}</strong>
+                    <p>{{ inquiry.supplier_notes }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- {% trans "询单明细" %} -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "产品明细" %}</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>{% trans "产品名称" %}</th>
+                        <th>{% trans "材料" %}</th>
+                        <th>{% trans "牌号" %}</th>
+                        <th>{% trans "数量" %}</th>
+                        <th>{% trans "单位" %}</th>
+                        <th>{% trans "技术规格" %}</th>
+                        <th>{% trans "图纸" %}</th>
+                        <th>{% trans "报价单价" %}</th>
+                        <th>{% trans "小计" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in inquiry.items.all %}
+                        <tr>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.material_name }}</td>
+                            <td>{{ item.material_grade|default:"-" }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.unit }}</td>
+                            <td>{{ item.specifications|default:"-" }}</td>
+                            <td>
+                                {% if item.drawing_file %}
+                                    <a href="{{ item.drawing_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">{% trans "下载" %}</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.quoted_price %}
+                                    ${{ item.quoted_price }}
+                                {% else %}
+                                    <span class="text-muted">{% trans "待报价" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.quoted_price %}
+                                    <strong>${{ item.subtotal|floatformat:2 }}</strong>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {% if inquiry.status == 'quoted' or inquiry.status == 'accepted' %}
+                    <tfoot>
+                        <tr>
+                            <td colspan="8" class="text-end"><strong>{% trans "总计：" %}</strong></td>
+                            <td><strong class="text-success">${{ inquiry.total_amount|floatformat:2 }}</strong></td>
+                        </tr>
+                    </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 附件列表 -->
+{% if inquiry.attachments.count > 0 %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "附件" %} ({{ inquiry.attachments.count }})</h5>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for attachment in inquiry.attachments.all %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ attachment.file_name }}</strong>
+                        {% if attachment.description %}
+                            <br><small class="text-muted">{{ attachment.description }}</small>
+                        {% endif %}
+                        <br><small class="text-muted">
+                            {{ attachment.get_file_size_display }} | 
+                            {% trans "上传于" %} {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
+                        </small>
+                    </div>
+                    <a href="{{ attachment.file.url }}" target="_blank" class="btn btn-sm btn-primary">{% trans "下载" %}</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- {% trans "操作按钮" %} -->
+{% if inquiry.status == 'quoted' %}
+<div class="alert alert-info">
+    <strong>{% trans "供应商已报价！" %}</strong> {% trans "如果您接受此报价，可以直接创建订单。" %}
+    <div class="mt-2">
+        <a href="{% url 'order_create' %}" class="btn btn-success">{% trans "创建订单" %}</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "询单详情" %} - {{ inquiry.inquiry_number }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% trans "询单详情" %}</h2>
+    <a href="{% url 'supplier_inquiry_list' %}" class="btn btn-outline-secondary">{% trans "返回列表" %}</a>
+ </div>
+
+<!-- 询单基本信息 -->
+<div class="card mb-3">
+  <div class="card-header bg-info text-white">
+    <h5 class="mb-0">{% trans "询单信息" %}</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-3">
+        <strong>{% trans "询单号：" %}</strong><br>
+        {{ inquiry.inquiry_number }}
+      </div>
+      <div class="col-md-3">
+        <strong>{% trans "客户：" %}</strong><br>
+        {{ inquiry.contact.company.company_name }}
+      </div>
+      <div class="col-md-3">
+        <strong>{% trans "状态：" %}</strong><br>
+        {% if inquiry.status == 'pending' %}
+          <span class="badge bg-warning">{% trans "待报价" %}</span>
+        {% elif inquiry.status == 'quoted' %}
+          <span class="badge bg-info">{% trans "已报价" %}</span>
+        {% elif inquiry.status == 'accepted' %}
+          <span class="badge bg-success">{% trans "已接受" %}</span>
+        {% else %}
+          <span class="badge bg-secondary">{{ inquiry.get_status_display }}</span>
+        {% endif %}
+      </div>
+      <div class="col-md-3">
+        <strong>{% trans "创建时间：" %}</strong><br>
+        {{ inquiry.created_at|date:"Y-m-d H:i" }}
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-md-6">
+        <strong>{% trans "客户交货期要求：" %}</strong><br>
+        {{ inquiry.delivery_requirement|default:_("未填写") }}
+      </div>
+      <div class="col-md-6">
+        <strong>{% trans "客户备注：" %}</strong><br>
+        {{ inquiry.customer_notes|default:_("无") }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 产品明细 -->
+<div class="card mb-3">
+  <div class="card-header">
+    <h5 class="mb-0">{% trans "产品明细" %}</h5>
+  </div>
+  <div class="card-body">
+    {% if inquiry.items.all %}
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>{% trans "产品名称" %}</th>
+              <th>{% trans "材料" %}</th>
+              <th>{% trans "牌号" %}</th>
+              <th>{% trans "数量" %}</th>
+              <th>{% trans "单位" %}</th>
+              <th>{% trans "技术规格" %}</th>
+              <th>{% trans "图纸" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in inquiry.items.all %}
+              <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.material_name }}</td>
+                <td>{{ item.material_grade|default:"-" }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit }}</td>
+                <td>{{ item.specifications|default:"-" }}</td>
+                <td>
+                  {% if item.drawing_file %}
+                    <a href="{{ item.drawing_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">{% trans "下载" %}</a>
+                  {% else %}
+                    <span class="text-muted">{% trans "无" %}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">{% trans "暂无明细项" %}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- 报价操作 -->
+<div class="card mb-3">
+  <div class="card-header bg-warning">
+    <h5 class="mb-0">{% trans "报价操作" %}</h5>
+  </div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">{% trans "预计交货期" %}</label>
+          <input type="text" name="quoted_lead_time" class="form-control" value="{{ inquiry.quoted_lead_time|default:'' }}" placeholder="{% trans '例如：7-10 天' %}">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">{% trans "供应商备注" %}</label>
+          <textarea name="supplier_notes" class="form-control" rows="3">{{ inquiry.supplier_notes|default:'' }}</textarea>
+        </div>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary">{% trans "提交报价" %}</button>
+        <a href="{% url 'supplier_inquiry_list' %}" class="btn btn-secondary">{% trans "取消" %}</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,265 @@
+{% extends 'orders/base.html' %}
+{% load static %}
+
+{% block title %}创建订单{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>创建订单</h2>
+    
+    <form method="post" enctype="multipart/form-data" id="order-form">
+        {% csrf_token %}
+        
+        <!-- 询单选择 -->
+        <div class="mb-3">
+            <label for="inquiry_select" class="form-label">选择询单（可选）</label>
+            <select class="form-select" id="inquiry_select" name="inquiry_id">
+                <option value="">-- 不基于询单创建 --</option>
+                {% for inquiry in available_inquiries %}
+                    <option value="{{ inquiry.id }}">
+                        {{ inquiry.inquiry_number }} - {{ inquiry.created_at|date:"Y-m-d" }}
+                        {% if inquiry.status == 'quoted' %}(已报价){% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- 基本信息 -->
+        <div class="card mb-3">
+            <div class="card-header">订单基本信息</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">交货要求</label>
+                    <input type="text" class="form-control" name="delivery_requirement" 
+                           id="delivery_requirement" value="">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">客户备注</label>
+                    <textarea class="form-control" name="customer_notes" 
+                              id="customer_notes" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 订单明细项 -->
+        <div class="card mb-3">
+            <div class="card-header">
+                订单明细
+                <button type="button" class="btn btn-sm btn-success float-end" id="add-item">
+                    添加明细项
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="order-items">
+                    <!-- 动态添加的明细项将显示在这里 -->
+                    <div class="item-form border rounded p-3 mb-3" data-item-index="0">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">产品名称</label>
+                                <input type="text" class="form-control" name="items[0][product_name]">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">材料名称</label>
+                                <input type="text" class="form-control" name="items[0][material_name]">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">材料牌号</label>
+                                <input type="text" class="form-control" name="items[0][material_grade]">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <label class="form-label">数量</label>
+                                <input type="number" class="form-control" name="items[0][quantity]" 
+                                       step="0.01" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">单位</label>
+                                <input type="text" class="form-control" name="items[0][unit]" 
+                                       value="PCS">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">单价</label>
+                                <input type="number" class="form-control" name="items[0][unit_price]" 
+                                       step="0.01">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">规格</label>
+                                <textarea class="form-control" name="items[0][specifications]" 
+                                          rows="2"></textarea>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-danger mt-2 remove-item">
+                            删除此项
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">创建订单</button>
+            <a href="{% url 'buyer_dashboard' %}" class="btn btn-secondary">取消</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// CSRF Token
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+// 询单选择变化时的处理
+document.getElementById('inquiry_select').addEventListener('change', async function() {
+    const inquiryId = this.value;
+    
+    if (!inquiryId) {
+        // 清空表单
+        clearOrderForm();
+        return;
+    }
+    
+    // 显示加载提示
+    showLoading();
+    
+    try {
+        // 获取询单详情
+        const response = await fetch(`/api/inquiry/${inquiryId}/details/`, {
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // 填充基本信息
+            document.getElementById('delivery_requirement').value = data.inquiry.delivery_requirement;
+            document.getElementById('customer_notes').value = data.inquiry.customer_notes;
+            
+            // 清空现有明细项
+            const itemsContainer = document.getElementById('order-items');
+            itemsContainer.innerHTML = '';
+            
+            // 添加询单中的明细项
+            data.items.forEach((item, index) => {
+                addItemForm(index, item);
+            });
+            
+            hideLoading();
+            showMessage('询单信息已同步', 'success');
+        } else {
+            hideLoading();
+            showMessage('获取询单信息失败：' + data.error, 'error');
+        }
+    } catch (error) {
+        hideLoading();
+        showMessage('网络错误：' + error, 'error');
+    }
+});
+
+// 添加明细项表单
+function addItemForm(index, itemData = {}) {
+    const itemHtml = `
+        <div class="item-form border rounded p-3 mb-3" data-item-index="${index}">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">产品名称</label>
+                    <input type="text" class="form-control" name="items[${index}][product_name]" 
+                           value="${itemData.product_name || ''}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">材料名称</label>
+                    <input type="text" class="form-control" name="items[${index}][material_name]" 
+                           value="${itemData.material_name || ''}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">材料牌号</label>
+                    <input type="text" class="form-control" name="items[${index}][material_grade]" 
+                           value="${itemData.material_grade || ''}">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-3">
+                    <label class="form-label">数量</label>
+                    <input type="number" class="form-control" name="items[${index}][quantity]" 
+                           value="${itemData.quantity || ''}" step="0.01" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">单位</label>
+                    <input type="text" class="form-control" name="items[${index}][unit]" 
+                           value="${itemData.unit || 'PCS'}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">单价</label>
+                    <input type="number" class="form-control" name="items[${index}][unit_price]" 
+                           value="${itemData.unit_price || ''}" step="0.01">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">规格</label>
+                    <textarea class="form-control" name="items[${index}][specifications]" 
+                              rows="2">${itemData.specifications || ''}</textarea>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-danger mt-2 remove-item" 
+                    onclick="removeItem(this)">
+                删除此项
+            </button>
+        </div>
+    `;
+    
+    document.getElementById('order-items').insertAdjacentHTML('beforeend', itemHtml);
+}
+
+// 清空订单表单
+function clearOrderForm() {
+    document.getElementById('delivery_requirement').value = '';
+    document.getElementById('customer_notes').value = '';
+    
+    const itemsContainer = document.getElementById('order-items');
+    itemsContainer.innerHTML = '';
+    addItemForm(0); // 添加一个空的明细项
+}
+
+// 手动添加新的明细项
+let itemIndex = 1;
+document.getElementById('add-item').addEventListener('click', function() {
+    addItemForm(itemIndex++);
+});
+
+// 删除明细项
+function removeItem(button) {
+    const itemForm = button.closest('.item-form');
+    if (document.querySelectorAll('.item-form').length > 1) {
+        itemForm.remove();
+    } else {
+        showMessage('至少需要保留一个明细项', 'warning');
+    }
+}
+
+// 显示/隐藏加载提示
+function showLoading() {
+    // 可以添加一个加载动画
+    document.body.style.cursor = 'wait';
+}
+
+function hideLoading() {
+    document.body.style.cursor = 'default';
+}
+
+// 显示消息提示
+function showMessage(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('form'));
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+</script>
+{% endblock %}

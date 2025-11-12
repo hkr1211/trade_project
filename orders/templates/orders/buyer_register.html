@@ -1,0 +1,88 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "买家注册" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{% trans "买家注册" %}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "公司名称 *" %}</label>
+                        {{ form.company_name }}
+                        {% if form.company_name.errors %}
+                            <div class="text-danger">{{ form.company_name.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">{% trans "请输入准确的公司名称，需与系统中已有公司匹配" %}</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "姓名 *" %}</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "职位" %}</label>
+                        {{ form.position }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "邮箱 *" %}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "电话" %}</label>
+                        {{ form.phone }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "密码 *" %}</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger">{{ form.password.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "确认密码 *" %}</label>
+                        {{ form.password_confirm }}
+                        {% if form.password_confirm.errors %}
+                            <div class="text-danger">{{ form.password_confirm.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>{% trans "注意：" %}</strong>{% trans "注册后需要等待管理员审批才能登录使用系统。" %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">{% trans "提交注册" %}</button>
+                </form>
+                
+                <div class="text-center mt-3">
+                    {% trans "已有账号？" %}<a href="{% url 'buyer_login' %}">{% trans "立即登录" %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

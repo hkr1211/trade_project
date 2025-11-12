@@ -1,0 +1,149 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "供应商仪表板" %}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{% trans "欢迎" %}，{{ contact.name }}！</h2>
+
+<div class="row mb-4">
+    <!-- {% trans "统计卡片" %} -->
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "待处理询单" %}</h5>
+                <h2 class="mb-0">{{ pending_inquiries }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "全部询单" %}</h5>
+                <h2 class="mb-0">{{ inquiry_count }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "待确认订单" %}</h5>
+                <h2 class="mb-0">{{ pending_orders }}</h2>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "全部订单" %}</h5>
+                <h2 class="mb-0">{{ order_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- {% trans "最近询单" %} -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "最近询单" %}</h5>
+    </div>
+    <div class="card-body">
+        {% if recent_inquiries %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans "询单号" %}</th>
+                            <th>{% trans "客户" %}</th>
+                            <th>{% trans "状态" %}</th>
+                            <th>{% trans "创建时间" %}</th>
+                            <th>{% trans "操作" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inquiry in recent_inquiries %}
+                            <tr>
+                                <td>{{ inquiry.inquiry_number }}</td>
+                                <td>{{ inquiry.contact.company.company_name }}</td>
+                                <td>
+                                    {% if inquiry.status == 'pending' %}
+                                        <span class="badge bg-warning">{% trans "待报价" %}</span>
+                                    {% elif inquiry.status == 'quoted' %}
+                                        <span class="badge bg-info">{% trans "已报价" %}</span>
+                                    {% elif inquiry.status == 'accepted' %}
+                                        <span class="badge bg-success">{% trans "已接受" %}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ inquiry.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ inquiry.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'supplier_inquiry_detail' inquiry.id %}" class="btn btn-sm btn-outline-primary">{% trans "查看/报价" %}</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <a href="{% url 'supplier_inquiry_list' %}" class="btn btn-primary">{% trans "查看全部询单" %}</a>
+        {% else %}
+            <p class="text-muted">{% trans "暂无询单" %}</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- {% trans "最近订单" %} -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "最近订单" %}</h5>
+    </div>
+    <div class="card-body">
+        {% if recent_orders %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans "订单号" %}</th>
+                            <th>{% trans "客户" %}</th>
+                            <th>{% trans "状态" %}</th>
+                            <th>{% trans "创建时间" %}</th>
+                            <th>{% trans "操作" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                            <tr>
+                                <td>{{ order.order_number }}</td>
+                                <td>{{ order.contact.company.company_name }}</td>
+                                <td>
+                                    {% if order.status == 'pending' %}
+                                        <span class="badge bg-warning">{% trans "待确认" %}</span>
+                                    {% elif order.status == 'confirmed' %}
+                                        <span class="badge bg-info">{% trans "已确认" %}</span>
+                                    {% elif order.status == 'shipped' %}
+                                        <span class="badge bg-primary">{% trans "已发货" %}</span>
+                                    {% elif order.status == 'completed' %}
+                                        <span class="badge bg-success">{% trans "已完成" %}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'supplier_order_detail' order.id %}" class="btn btn-sm btn-outline-success">{% trans "查看/更新" %}</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <a href="{% url 'supplier_order_list' %}" class="btn btn-success">{% trans "查看全部订单" %}</a>
+        {% else %}
+            <p class="text-muted">{% trans "暂无订单" %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

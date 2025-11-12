@@ -1,0 +1,293 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "订单详情" %} - {{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% trans "订单详情" %}</h2>
+    <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">{% trans "返回列表" %}</a>
+</div>
+
+<!-- {% trans "订单基本信息" %} -->
+<div class="card mb-3">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">{% trans "订单信息" %}</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <strong>{% trans "订单号：" %}</strong><br>
+                {{ order.order_number }}
+            </div>
+            <div class="col-md-3">
+                <strong>{% trans "订单状态：" %}</strong><br>
+                {% if order.status == 'pending' %}
+                    <span class="badge bg-warning">{{ order.get_status_display }}</span>
+                {% elif order.status == 'confirmed' %}
+                    <span class="badge bg-info">{{ order.get_status_display }}</span>
+                {% elif order.status == 'shipped' %}
+                    <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                {% elif order.status == 'completed' %}
+                    <span class="badge bg-success">{{ order.get_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <strong>{% trans "付款状态：" %}</strong><br>
+                {% if order.payment_status == 'paid' %}
+                    <span class="badge bg-success">{{ order.get_payment_status_display }}</span>
+                {% elif order.payment_status == 'partial' %}
+                    <span class="badge bg-warning">{{ order.get_payment_status_display }}</span>
+                {% else %}
+                    <span class="badge bg-danger">{{ order.get_payment_status_display }}</span>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <strong>{% trans "订单金额：" %}</strong><br>
+                <h4 class="text-success">${{ order.total_amount|floatformat:2 }}</h4>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <strong>{% trans "创建时间：" %}</strong><br>
+                {{ order.created_at|date:"Y-m-d H:i" }}
+            </div>
+            <div class="col-md-4">
+                <strong>{% trans "预计交货日期：" %}</strong><br>
+                {{ order.delivery_date|date:"Y-m-d"|default:_("待确认") }}
+            </div>
+            <div class="col-md-4">
+                <strong>{% trans "实际发货日期：" %}</strong><br>
+                {{ order.shipping_date|date:"Y-m-d"|default:"-" }}
+            </div>
+        </div>
+        
+        {% if order.customer_notes %}
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>{% trans "客户备注：" %}</strong>
+                    <p>{{ order.customer_notes }}</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        {% if order.supplier_notes %}
+            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>{% trans "供应商备注：" %}</strong>
+                    <p>{{ order.supplier_notes }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- {% trans "订单明细" %} -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "产品明细" %}</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>{% trans "产品名称" %}</th>
+                        <th>{% trans "材料" %}</th>
+                        <th>{% trans "牌号" %}</th>
+                        <th>{% trans "数量" %}</th>
+                        <th>{% trans "单位" %}</th>
+                        <th>{% trans "技术规格" %}</th>
+                        <th>{% trans "图纸" %}</th>
+                        <th>{% trans "单价" %}</th>
+                        <th>{% trans "小计" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.material_name }}</td>
+                            <td>{{ item.material_grade|default:"-" }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.unit }}</td>
+                            <td>{{ item.specifications|default:"-" }}</td>
+                            <td>
+                                {% if item.drawing_file %}
+                                    <a href="{{ item.drawing_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">{% trans "下载" %}</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>${{ item.unit_price }}</td>
+                            <td><strong>${{ item.subtotal|floatformat:2 }}</strong></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8" class="text-end"><strong>{% trans "总计：" %}</strong></td>
+                        <td><strong class="text-success">${{ order.total_amount|floatformat:2 }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 附件列表 -->
+{% if order.attachments.count > 0 %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "附件" %} ({{ order.attachments.count }})</h5>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for attachment in order.attachments.all %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ attachment.file_name }}</strong>
+                        {% if attachment.description %}
+                            <br><small class="text-muted">{{ attachment.description }}</small>
+                        {% endif %}
+                        <br><small class="text-muted">
+                            {{ attachment.get_file_size_display }} | 
+                            {% trans "上传于" %} {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
+                        </small>
+                    </div>
+                    <a href="{{ attachment.file.url }}" target="_blank" class="btn btn-sm btn-primary">{% trans "下载" %}</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 订单状态时间线 -->
+<!-- 付款凭证上传（可选） -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "付款凭证（可选）" %}</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" class="row g-3">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="upload_payment_proof">
+            <div class="col-md-8">
+                <label class="form-label">{% trans "上传汇款单或付款凭证（可选）" %}</label>
+                <input type="file" name="payment_proof" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.ppt,.pptx">
+                <small class="text-muted">{% trans "提示：部分客户为月结，无需上传付款凭证。" %}</small>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-success">{% trans "提交付款凭证" %}</button>
+            </div>
+        </form>
+        
+        <!-- 已上传的付款凭证列表（按描述标记） -->
+        <hr>
+        <div>
+            <strong>{% trans "已上传的付款凭证：" %}</strong>
+            <div class="list-group mt-2">
+                {% for attachment in order.attachments.all %}
+                    {% if attachment.description == '付款凭证' %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ attachment.file_name }}</strong>
+                                <br><small class="text-muted">{% trans "上传于" %} {{ attachment.uploaded_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                            <a href="{{ attachment.file.url }}" target="_blank" class="btn btn-sm btn-primary">{% trans "下载" %}</a>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="text-muted">{% trans "暂无付款凭证。" %}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+<!-- 订单状态时间线 -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "订单进度" %}</h5>
+    </div>
+    <div class="card-body">
+        <div class="timeline">
+            <div class="timeline-item {% if order.created_at %}completed{% endif %}">
+                <strong>{% trans "订单创建" %}</strong><br>
+                <small>{{ order.created_at|date:"Y-m-d H:i" }}</small>
+            </div>
+            
+            <div class="timeline-item {% if order.confirmed_at %}completed{% endif %}">
+                <strong>{% trans "订单确认" %}</strong><br>
+                <small>{% if order.confirmed_at %}{{ order.confirmed_at|date:"Y-m-d H:i" }}{% else %}{% trans "待确认" %}{% endif %}</small>
+            </div>
+            
+            <div class="timeline-item {% if order.shipping_date %}completed{% endif %}">
+                <strong>{% trans "已发货" %}</strong><br>
+                <small>{% if order.shipping_date %}{{ order.shipping_date|date:"Y-m-d" }}{% else %}{% trans "未发货" %}{% endif %}</small>
+            </div>
+            
+            <div class="timeline-item {% if order.completion_date %}completed{% endif %}">
+                <strong>{% trans "订单完成" %}</strong><br>
+                <small>{% if order.completion_date %}{{ order.completion_date|date:"Y-m-d" }}{% else %}{% trans "未完成" %}{% endif %}</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.timeline-item {
+    text-align: center;
+    position: relative;
+    flex: 1;
+    padding: 0 10px;
+}
+
+.timeline-item::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: block;
+    margin: 0 auto 10px;
+    position: relative;
+    z-index: 1;
+    border: 3px solid white;
+}
+
+.timeline-item.completed::before {
+    background: #198754;
+}
+
+.timeline-item.completed strong {
+    color: #198754;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'orders/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "我的询单" %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% trans "我的询单" %}</h2>
+    <a href="{% url 'inquiry_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> {% trans "新建询单" %}
+    </a>
+</div>
+
+<!-- {% trans "检索" %} -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="q" value="{{ q|default:'' }}" class="form-control" placeholder="{% trans '按询单号 / 产品名称检索' %}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">{% trans "检索" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if inquiries %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>{% trans "询单号" %}</th>
+                    <th>{% trans "状态" %}</th>
+                    <th>{% trans "产品数量" %}</th>
+                    <th>{% trans "附件" %}</th>
+                    <th>{% trans "创建时间" %}</th>
+                    <th>{% trans "报价金额" %}</th>
+                    <th>{% trans "操作" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inquiry in inquiries %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'inquiry_detail' inquiry.id %}">
+                                <strong>{{ inquiry.inquiry_number }}</strong>
+                            </a>
+                        </td>
+                        <td>
+                            {% if inquiry.status == 'pending' %}
+                                <span class="badge bg-warning">{{ inquiry.get_status_display }}</span>
+                            {% elif inquiry.status == 'quoted' %}
+                                <span class="badge bg-info">{{ inquiry.get_status_display }}</span>
+                            {% elif inquiry.status == 'accepted' %}
+                                <span class="badge bg-success">{{ inquiry.get_status_display }}</span>
+                            {% elif inquiry.status == 'rejected' %}
+                                <span class="badge bg-danger">{{ inquiry.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ inquiry.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ inquiry.items.count }} {% trans "项" %}</td>
+                        <td>
+                            {% if inquiry.attachments.count > 0 %}
+                                <span class="badge bg-success">{{ inquiry.attachments.count }} {% trans "个" %}</span>
+                            {% else %}
+                                <span class="text-muted">{% trans "无" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ inquiry.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            {% if inquiry.status == 'quoted' %}
+                                <strong class="text-success">${{ inquiry.total_amount|floatformat:2 }}</strong>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'inquiry_detail' inquiry.id %}" class="btn btn-sm btn-outline-primary">{% trans "查看" %}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        <h4>{% trans "还没有询单" %}</h4>
+        <p>{% trans "点击上方按钮创建您的第一个询单" %}</p>
+    </div>
+{% endif %}
+{% endblock %}
