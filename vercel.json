@@ -1,10 +1,27 @@
 {
+  "version": 2,
   "builds": [
-    { "src": "server.py", "use": "@vercel/python" }
+    {
+      "src": "trade_project/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb" }
+    },
+    {
+      "src": "build.sh",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "staticfiles"
+      }
+    }
   ],
   "routes": [
-    { "src": "/static/(.*)", "dest": "/staticfiles/$1" },
-    { "src": "/(.*)", "dest": "server.py" }
-  ],
-  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    {
+      "src": "/static/(.*)",
+      "dest": "/staticfiles/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "trade_project/wsgi.py"
+    }
+  ]
 }

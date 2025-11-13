@@ -26,3 +26,7 @@ dist/
 
 # Vercel
 .vercel/
+
+#ssh keys
+ssh_rsa_key.txt
+ssh_rsa_key.txt.pub
