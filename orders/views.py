@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.db.utils import OperationalError
 from django.db import connection
 
-from .models import Company, Contact, Inquiry, InquiryItem, Order, OrderItem, OrderAttachment
+from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment
 from .forms import (
     BuyerRegistrationForm, 
     InquiryForm, 
@@ -358,7 +358,7 @@ def supplier_order_detail(request, order_id):
         'order': order
     })
 
-
+# ==================== 首页 ====================
 # 修改原有的 home 视图，支持供应商跳转
 def home(request):
     """首页 - 显示欢迎页面"""
@@ -375,21 +375,6 @@ def home(request):
             pass
     
     return render(request, 'orders/home.html', {'contact': contact})
-
-# ==================== 首页 ====================
-def home(request):
-    """首页 - 显示欢迎页面"""
-    # 如果是已登录的buyer，跳转到仪表板
-    if request.user.is_authenticated:
-        try:
-            contact = Contact.objects.get(user=request.user)
-            if contact.approval_status == 'approved':
-                return redirect('buyer_dashboard')
-        except Contact.DoesNotExist:
-            pass  # 不是buyer，继续显示首页
-    
-    # 显示首页（包括未登录用户和管理员）
-    return render(request, 'orders/home.html')
 
 
 # ==================== Buyer 注册 ====================
@@ -601,12 +586,14 @@ def inquiry_create(request):
                                 drawing_file=item_form.cleaned_data.get('drawing_file')
                             )
                     
+                    # 第 604-611 行
                     # 处理附件上传
                     files = request.FILES.getlist('attachments')
                     for file in files:
                         InquiryAttachment.objects.create(
                             inquiry=inquiry,
                             file=file,
+                            file_name=file.name,  # 添加 file_name
                             uploaded_by=request.user
                         )
 
