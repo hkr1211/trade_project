@@ -1,0 +1,7 @@
+#!/bin/bash
+# Vercel build hook - automatically executed during deployment
+
+echo "Running collectstatic..."
+python manage.py collectstatic --noinput --clear
+
+echo "Static files collected successfully!"
