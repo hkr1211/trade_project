@@ -85,23 +85,24 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
-            conn_max_age=600,
+            conn_max_age=60,  # 减少连接时间，适合无服务器环境
             conn_health_checks=True,
-            ssl_require=True,
         )
     }
-    
+
     # 添加额外的数据库选项
     DATABASES['default'].setdefault('OPTIONS', {})
     DATABASES['default']['OPTIONS'].update({
+        'sslmode': 'require',  # Supabase 需要 SSL
         'connect_timeout': 10,
         'keepalives': 1,
         'keepalives_idle': 30,
         'keepalives_interval': 10,
         'keepalives_count': 5,
     })
-    
+
     print(f"Database configured: {DATABASES['default']['ENGINE']}")  # 调试用
+    print(f"Database host: {DATABASES['default'].get('HOST', 'N/A')}")  # 调试用
     
 elif os.environ.get('VERCEL'):
     # Vercel 环境但没有 DATABASE_URL（回退到临时 SQLite）
