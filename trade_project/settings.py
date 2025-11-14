@@ -146,8 +146,23 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Additional static file directories (if you have app-specific static files)
+STATICFILES_DIRS = []
+
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if DEBUG:
+    # 开发环境：使用标准存储，自动刷新
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    WHITENOISE_AUTOREFRESH = True
+else:
+    # 生产环境：使用压缩和缓存清除
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    WHITENOISE_AUTOREFRESH = False
+
+# WhiteNoise 静态文件配置
+WHITENOISE_USE_FINDERS = DEBUG  # 开发时使用 finders，生产时使用收集的文件
+WHITENOISE_MANIFEST_STRICT = False  # 在缺少文件时不抛出错误
+WHITENOISE_ALLOW_ALL_ORIGINS = True  # 允许跨域请求静态文件
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
