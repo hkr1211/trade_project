@@ -7,10 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "外贸询单订单系统" %}{% endblock %}</title>
+
+    <!-- Favicon (using Bootstrap icon as SVG favicon) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14'>📋</text></svg>">
     
     <!-- Bootstrap 5 CSS -->
-<link id="bootstrap-cdn" href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-<link id="icons-cdn" rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     
     {% block extra_css %}{% endblock %}
     
@@ -129,41 +132,7 @@
     </footer>
 
     <!-- Bootstrap 5 JS -->
-<script id="bootstrap-js-cdn" src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-  // 动态 CSS 回退：如果 CDN 样式未加载，则加载本地静态文件
-  (function() {
-    function hasLoaded(hrefPart) {
-      try {
-        return Array.from(document.styleSheets).some(function(ss) {
-          return ss.href && ss.href.indexOf(hrefPart) !== -1;
-        });
-      } catch (e) {
-        return false;
-      }
-    }
-    if (!hasLoaded('ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css')) {
-      var lk = document.createElement('link');
-      lk.rel = 'stylesheet';
-      lk.href = "{% static 'vendor/bootstrap/5.3.0/bootstrap.min.css' %}";
-      document.head.appendChild(lk);
-    }
-    if (!hasLoaded('ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.css')) {
-      var ik = document.createElement('link');
-      ik.rel = 'stylesheet';
-      ik.href = "{% static 'vendor/bootstrap-icons/1.10.0/font/bootstrap-icons.css' %}";
-      document.head.appendChild(ik);
-    }
-  })();
-  // 动态 JS 回退：如果 CDN 的 Bootstrap 未提供全局对象，则加载本地
-  window.addEventListener('load', function() {
-    if (!window.bootstrap) {
-      var s = document.createElement('script');
-      s.src = "{% static 'vendor/bootstrap/5.3.0/bootstrap.bundle.min.js' %}";
-      document.body.appendChild(s);
-    }
-  });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     
     {% block extra_js %}{% endblock %}
 </body>
