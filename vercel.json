@@ -1,16 +1,24 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "trade_project/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb" }
+    },
+    {
+      "src": "run_migrate.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb" }
     }
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
+      "src": "^/static/(.*)$",
       "dest": "/staticfiles/$1"
+    },
+    {
+      "src": "^/run-migrate$",
+      "dest": "/run_migrate.py"
     },
     {
       "src": "/(.*)",
