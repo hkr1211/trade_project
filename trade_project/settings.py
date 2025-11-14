@@ -72,16 +72,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'trade_project.wsgi.application'
 
 # Database Configuration
+# Database Configuration
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-# Supabase 使用连接池端口 6543 而不是直接连接端口 5432
-if DATABASE_URL and 'supabase.co' in DATABASE_URL:
-    if ':5432/' in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace(':5432/', ':6543/')
-    print(f"Using Supabase pooler connection: {DATABASE_URL.split('@')[1]}")  # 调试用
-
 if DATABASE_URL:
-    # 生产环境：使用 PostgreSQL (Supabase)
+    # 生产环境：使用 PostgreSQL（Supabase 或其它托管 PG）
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -90,8 +85,8 @@ if DATABASE_URL:
             ssl_require=True,
         )
     }
-    
-    # 添加额外的数据库选项
+
+    # 连接保活设置（可保留）
     DATABASES['default'].setdefault('OPTIONS', {})
     DATABASES['default']['OPTIONS'].update({
         'connect_timeout': 10,
@@ -100,27 +95,28 @@ if DATABASE_URL:
         'keepalives_interval': 10,
         'keepalives_count': 5,
     })
-    
-    print(f"Database configured: {DATABASES['default']['ENGINE']}")  # 调试用
-    
+
 elif os.environ.get('VERCEL'):
-    # Vercel 环境但没有 DATABASE_URL（回退到临时 SQLite）
+    # Vercel 环境但没有 DATABASE_URL 时，退回临时 SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': '/tmp/db.sqlite3',
         }
     }
-    print("Warning: Using temporary SQLite on Vercel!")
 else:
-    # 本地开发环境：使用 SQLite
+    # 本地开发，使用 SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    print("Using local SQLite database")
+
+    
+    print(f"Database configured: {DATABASES['default']['ENGINE']}")  # 调试用
+    
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
