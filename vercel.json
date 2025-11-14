@@ -9,21 +9,12 @@
       "src": "run_migrate.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb" }
-    },
-    {
-      "src": "create_superuser.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
     }
   ],
   "routes": [
     {
       "src": "^/run-migrate$",
       "dest": "/run_migrate.py"
-    },
-    {
-      "src": "^/create-superuser$",
-      "dest": "/create_superuser.py"
     },
     {
       "src": "/(.*)",
