@@ -230,3 +230,4 @@ LOGGING = {
 
 if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
     DEFAULT_FILE_STORAGE = 'trade_project.storage_backends.SupabaseStorage'
+    MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定
