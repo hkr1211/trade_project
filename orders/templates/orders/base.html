@@ -7,10 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "外贸询单订单系统" %}{% endblock %}</title>
-    
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+
     <!-- Bootstrap 5 CSS -->
-<link id="bootstrap-cdn" href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-<link id="icons-cdn" rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.css">
+<link id="bootstrap-cdn" href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link id="icons-cdn" rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.css" crossorigin="anonymous">
     
     {% block extra_css %}{% endblock %}
     
@@ -129,39 +132,55 @@
     </footer>
 
     <!-- Bootstrap 5 JS -->
-<script id="bootstrap-js-cdn" src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script id="bootstrap-js-cdn" src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
-  // 动态 CSS 回退：如果 CDN 样式未加载，则加载本地静态文件
+  // 动态 CSS 回退：如果 CDN 样式未加载或被跟踪保护阻止，则加载本地静态文件
   (function() {
     function hasLoaded(hrefPart) {
       try {
         return Array.from(document.styleSheets).some(function(ss) {
-          return ss.href && ss.href.indexOf(hrefPart) !== -1;
+          try {
+            return ss.href && ss.href.indexOf(hrefPart) !== -1 && ss.cssRules && ss.cssRules.length > 0;
+          } catch (e) {
+            // CORS or tracking prevention may block cssRules access
+            // If we can see the href but not the rules, assume it's loaded
+            return ss.href && ss.href.indexOf(hrefPart) !== -1;
+          }
         });
       } catch (e) {
         return false;
       }
     }
-    if (!hasLoaded('ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css')) {
-      var lk = document.createElement('link');
-      lk.rel = 'stylesheet';
-      lk.href = "{% static 'vendor/bootstrap/5.3.0/bootstrap.min.css' %}";
-      document.head.appendChild(lk);
-    }
-    if (!hasLoaded('ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.css')) {
-      var ik = document.createElement('link');
-      ik.rel = 'stylesheet';
-      ik.href = "{% static 'vendor/bootstrap-icons/1.10.0/font/bootstrap-icons.css' %}";
-      document.head.appendChild(ik);
-    }
+
+    // Add a small delay to allow CDN to load
+    setTimeout(function() {
+      if (!hasLoaded('bootstrap/5.3.0/css/bootstrap') && !hasLoaded('bootstrap.min.css')) {
+        console.log('Bootstrap CSS CDN failed, loading local fallback');
+        var lk = document.createElement('link');
+        lk.rel = 'stylesheet';
+        lk.href = "{% static 'vendor/bootstrap/5.3.0/bootstrap.min.css' %}";
+        document.head.appendChild(lk);
+      }
+      if (!hasLoaded('bootstrap-icons/1.10.0') && !hasLoaded('bootstrap-icons.css')) {
+        console.log('Bootstrap Icons CDN failed, loading local fallback');
+        var ik = document.createElement('link');
+        ik.rel = 'stylesheet';
+        ik.href = "{% static 'vendor/bootstrap-icons/1.10.0/font/bootstrap-icons.css' %}";
+        document.head.appendChild(ik);
+      }
+    }, 100);
   })();
+
   // 动态 JS 回退：如果 CDN 的 Bootstrap 未提供全局对象，则加载本地
   window.addEventListener('load', function() {
-    if (!window.bootstrap) {
-      var s = document.createElement('script');
-      s.src = "{% static 'vendor/bootstrap/5.3.0/bootstrap.bundle.min.js' %}";
-      document.body.appendChild(s);
-    }
+    setTimeout(function() {
+      if (!window.bootstrap) {
+        console.log('Bootstrap JS CDN failed, loading local fallback');
+        var s = document.createElement('script');
+        s.src = "{% static 'vendor/bootstrap/5.3.0/bootstrap.bundle.min.js' %}";
+        document.body.appendChild(s);
+      }
+    }, 100);
   });
 </script>
     

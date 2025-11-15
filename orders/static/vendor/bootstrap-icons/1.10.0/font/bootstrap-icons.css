@@ -1,0 +1,30 @@
+/* Bootstrap Icons v1.10.0 - Fallback placeholder */
+/* This file serves as a fallback when CDN is unavailable */
+/* For full functionality, the CDN version should be used */
+
+/* If you see this comment in your browser's dev tools, the CDN failed to load */
+/* You can download the full Bootstrap Icons from: https://github.com/twbs/bootstrap-icons/releases/download/v1.10.0/bootstrap-icons-1.10.0.zip */
+
+@font-face {
+  font-display: block;
+  font-family: "bootstrap-icons";
+  src: url("./fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6") format("woff2"),
+       url("./fonts/bootstrap-icons.woff?dd67030699838ea613ee6dbda90effa6") format("woff");
+}
+
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -.125em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Note: Font files need to be added to the fonts/ directory for this to work */
