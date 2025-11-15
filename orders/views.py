@@ -385,6 +385,11 @@ def buyer_register(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
+                    # 检查用户是否已存在
+                    if User.objects.filter(username=form.cleaned_data['email']).exists():
+                        messages.error(request, _('该邮箱已被注册为用户账号。'))
+                        return render(request, 'orders/buyer_register.html', {'form': form})
+
                     # 创建用户账号（设为不活跃，等待审批）
                     user = User.objects.create_user(
                         username=form.cleaned_data['email'],
@@ -407,6 +412,7 @@ def buyer_register(request):
                     contact = Contact.objects.create(
                         company=company,
                         user=user,
+                        role='buyer',  # 明确设置为买家角色
                         name=form.cleaned_data['name'],
                         position=form.cleaned_data.get('position', ''),
                         email=form.cleaned_data['email'],
@@ -417,6 +423,9 @@ def buyer_register(request):
                     messages.success(request, _('注册成功！您的账号正在等待管理员审批，审批通过后您将收到邮件通知。'))
                     return redirect('buyer_login')
             except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f'Buyer registration failed: {str(e)}', exc_info=True)
                 messages.error(request, _('注册失败：%(error)s') % {'error': str(e)})
     else:
         form = BuyerRegistrationForm()
