@@ -383,6 +383,9 @@ def buyer_register(request):
     if request.method == 'POST':
         form = BuyerRegistrationForm(request.POST)
         if form.is_valid():
+            import logging
+            logger = logging.getLogger(__name__)
+
             try:
                 with transaction.atomic():
                     # 创建用户账号（设为不活跃，等待审批）
@@ -393,7 +396,7 @@ def buyer_register(request):
                         first_name=form.cleaned_data['name'],
                         is_active=False  # 设为不活跃，等待审批
                     )
-                    
+
                     # 获取或创建公司记录
                     company, _ = Company.objects.get_or_create(
                         company_name=form.cleaned_data['company_name'],
@@ -407,20 +410,23 @@ def buyer_register(request):
                     contact = Contact.objects.create(
                         company=company,
                         user=user,
+                        role='buyer',  # 明确指定角色为买家
                         name=form.cleaned_data['name'],
                         position=form.cleaned_data.get('position', ''),
                         email=form.cleaned_data['email'],
                         phone=form.cleaned_data.get('phone', ''),
                         approval_status='pending'
                     )
-                    
+
                     messages.success(request, _('注册成功！您的账号正在等待管理员审批，审批通过后您将收到邮件通知。'))
                     return redirect('buyer_login')
             except Exception as e:
+                # 记录详细错误日志
+                logger.error(f'买家注册失败: {str(e)}', exc_info=True)
                 messages.error(request, _('注册失败：%(error)s') % {'error': str(e)})
     else:
         form = BuyerRegistrationForm()
-    
+
     return render(request, 'orders/buyer_register.html', {'form': form})
 
 

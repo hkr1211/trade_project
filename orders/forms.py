@@ -48,11 +48,15 @@ class BuyerRegistrationForm(forms.Form):
         label=_('确认密码'),
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
-    
+
     def clean_email(self):
         """验证邮箱是否已被使用"""
         email = self.cleaned_data['email']
+        # 检查 Contact 表中是否已存在
         if Contact.objects.filter(email=email).exists():
+            raise ValidationError(_('该邮箱已被注册。'))
+        # 检查 User 表中是否已存在（username 使用邮箱）
+        if User.objects.filter(username=email).exists():
             raise ValidationError(_('该邮箱已被注册。'))
         return email
     
@@ -100,11 +104,15 @@ class SupplierRegistrationForm(forms.Form):
         label=_('确认密码'),
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
-    
+
     def clean_email(self):
         """验证邮箱是否已被使用"""
         email = self.cleaned_data['email']
+        # 检查 Contact 表中是否已存在
         if Contact.objects.filter(email=email).exists():
+            raise ValidationError(_('该邮箱已被注册。'))
+        # 检查 User 表中是否已存在（username 使用邮箱）
+        if User.objects.filter(username=email).exists():
             raise ValidationError(_('该邮箱已被注册。'))
         return email
     
