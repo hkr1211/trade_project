@@ -407,6 +407,7 @@ def buyer_register(request):
                     contact = Contact.objects.create(
                         company=company,
                         user=user,
+                        role='buyer',
                         name=form.cleaned_data['name'],
                         position=form.cleaned_data.get('position', ''),
                         email=form.cleaned_data['email'],
