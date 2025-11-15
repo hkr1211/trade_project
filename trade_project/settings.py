@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',  # django-storages for S3
     'orders',
 ]
 
@@ -149,9 +150,32 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise 配置
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# 媒体文件配置（用户上传的文件）
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# ==================== 媒体文件配置（用户上传的文件）====================
+# 在 Vercel serverless 环境中，文件系统是只读的，需要使用云存储
+USE_S3 = os.environ.get('USE_S3', 'False').lower() == 'true'
+
+if USE_S3:
+    # AWS S3 配置（生产环境）
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+    # S3 配置选项
+    AWS_S3_FILE_OVERWRITE = False  # 不覆盖同名文件
+    AWS_DEFAULT_ACL = 'private'  # 默认为私有文件
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_QUERYSTRING_AUTH = True  # 使用签名 URL 访问私有文件
+    AWS_QUERYSTRING_EXPIRE = 3600  # 签名 URL 1小时后过期
+
+    # 使用自定义存储后端
+    DEFAULT_FILE_STORAGE = 'trade_project.storage_backends.MediaStorage'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+else:
+    # 本地开发环境配置
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
