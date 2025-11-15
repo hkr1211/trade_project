@@ -1,4 +1,5 @@
 {
+  "buildCommand": "python vercel_build.py",
   "builds": [
     {
       "src": "trade_project/wsgi.py",
@@ -17,8 +18,13 @@
       "dest": "/run_migrate.py"
     },
     {
+      "src": "/static/(.*)",
+      "dest": "/staticfiles/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "trade_project/wsgi.py"
     }
-  ]
+  ],
+  "outputDirectory": "staticfiles"
 }

@@ -21,6 +21,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '.vercel.app',
     '.supabase.co',
+    'trade.yj-ql.com',
 ]
 
 # 如果在生产环境，添加实际域名
@@ -175,6 +176,7 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.supabase.co',
+    'https://trade.yj-ql.com',
 ]
 
 # 代理设置（Vercel 在负载均衡器后面）
