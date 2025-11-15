@@ -21,6 +21,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '.vercel.app',
     '.supabase.co',
+    'trade.yj-ql.com',
+    '.yj-ql.com',
 ]
 
 # 如果在生产环境，添加实际域名
@@ -147,7 +149,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# 在 Vercel 环境使用压缩但不使用 manifest，避免无服务器环境的问题
+if os.environ.get('VERCEL'):
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
@@ -175,6 +181,8 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.supabase.co',
+    'https://trade.yj-ql.com',
+    'https://*.yj-ql.com',
 ]
 
 # 代理设置（Vercel 在负载均衡器后面）
