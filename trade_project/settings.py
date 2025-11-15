@@ -151,7 +151,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Vercel 环境中使用 /tmp 目录（唯一可写的目录）
+if os.environ.get('VERCEL'):
+    MEDIA_ROOT = Path('/tmp/media')
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
