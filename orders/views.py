@@ -750,7 +750,17 @@ def order_create(request):
                 # 如果基于询单创建，更新询单状态
                 if inquiry_id:
                     Inquiry.objects.filter(id=inquiry_id).update(status='ordered')
-                
+
+                # 处理附件上传
+                files = request.FILES.getlist('attachments')
+                for file in files:
+                    OrderAttachment.objects.create(
+                        order=order,
+                        file=file,
+                        file_name=file.name,
+                        uploaded_by=request.user
+                    )
+
                 messages.success(request, _('订单 %(order_number)s 创建成功！') % {'order_number': order_number})
                 return redirect('order_detail', order_id=order.id)
                 

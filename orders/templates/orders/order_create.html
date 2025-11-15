@@ -103,7 +103,21 @@
                 </div>
             </div>
         </div>
-        
+
+        <!-- 附件上传 -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "附件上传（可选）" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">{% trans "上传多个文件" %}</label>
+                    <input type="file" class="form-control" name="attachments" multiple>
+                    <small class="form-text text-muted">{% trans "可以一次选择多个文件上传，支持 PDF, JPG, PNG, DWG, DXF, PPT, DOC 格式，单个文件最大 20MB" %}</small>
+                </div>
+            </div>
+        </div>
+
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">{% trans "创建订单" %}</button>
             <a href="{% url 'buyer_dashboard' %}" class="btn btn-secondary">{% trans "取消" %}</a>
