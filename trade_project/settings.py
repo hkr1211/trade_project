@@ -175,6 +175,7 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.supabase.co',
+    'https://trade.yj-ql.com',
 ]
 
 # 代理设置（Vercel 在负载均衡器后面）
