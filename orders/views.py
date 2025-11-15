@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.db import transaction
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import JsonResponse
@@ -700,8 +701,13 @@ def order_create(request):
         
         try:
             with transaction.atomic():
-                # 生成订单号
-                order_number = f"ORD-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+                # 生成唯一订单号（时间戳+随机数，确保唯一）
+                base_ts = timezone.now().strftime('%Y%m%d%H%M%S')
+                while True:
+                    order_number_candidate = f"ORD-{base_ts}{get_random_string(4, '0123456789')}"
+                    if not Order.objects.filter(order_number=order_number_candidate).exists():
+                        order_number = order_number_candidate
+                        break
                 
                 # 创建订单
                 # 合并备注：若提供了交货期（天），与客户备注合并保存
@@ -746,6 +752,17 @@ def order_create(request):
                             unit_price=item_data.get('unit_price', 0),
                             specifications=item_data.get('specifications', '')
                         )
+                
+                # 处理订单附件（可选，多文件）
+                files = request.FILES.getlist('attachments')
+                for f in files:
+                    OrderAttachment.objects.create(
+                        order=order,
+                        file=f,
+                        file_name=getattr(f, 'name', ''),
+                        description='订单附件',
+                        uploaded_by=request.user
+                    )
                 
                 # 如果基于询单创建，更新询单状态
                 if inquiry_id:

@@ -101,6 +101,11 @@
                     <textarea class="form-control" name="customer_notes" 
                               id="customer_notes" rows="3"></textarea>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">{% trans "订单附件（可选，可多选）" %}</label>
+                    <input type="file" class="form-control" name="attachments" multiple>
+                    <small class="form-text text-muted">{% trans "支持 pdf、图片、文档、CAD 等格式；单文件≤20MB" %}</small>
+                </div>
             </div>
         </div>
         
