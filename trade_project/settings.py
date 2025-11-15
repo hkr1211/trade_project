@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'orders',
 ]
 
@@ -42,6 +43,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -175,6 +177,32 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.supabase.co',
+    'https://trade.yj-ql.com',
+]
+
+# CSRF Cookie 设置 - 允许前端读取 CSRF token
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# CORS 设置
+CORS_ALLOWED_ORIGINS = [
+    'https://trade.yj-ql.com',
+]
+
+# 允许 CORS 请求携带凭证（cookies, session）
+CORS_ALLOW_CREDENTIALS = True
+
+# 允许的请求头
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 # 代理设置（Vercel 在负载均衡器后面）
@@ -189,10 +217,11 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'
-    
+
     # Cookie 安全
     CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = False  # 设为 False 以允许 JavaScript 读取 CSRF token
+    CSRF_COOKIE_SAMESITE = 'Lax'
 
 # ==================== 日志配置（用于调试 Vercel 部署）====================
 LOGGING = {
