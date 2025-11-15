@@ -57,53 +57,6 @@
   </div>
 </div>
 
-<!-- 产品明细 -->
-<div class="card mb-3">
-  <div class="card-header">
-    <h5 class="mb-0">{% trans "产品明细" %}</h5>
-  </div>
-  <div class="card-body">
-    {% if inquiry.items.all %}
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>{% trans "产品名称" %}</th>
-              <th>{% trans "材料" %}</th>
-              <th>{% trans "牌号" %}</th>
-              <th>{% trans "数量" %}</th>
-              <th>{% trans "单位" %}</th>
-              <th>{% trans "技术规格" %}</th>
-              <th>{% trans "图纸" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in inquiry.items.all %}
-              <tr>
-                <td>{{ item.product_name }}</td>
-                <td>{{ item.material_name }}</td>
-                <td>{{ item.material_grade|default:"-" }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.unit }}</td>
-                <td>{{ item.specifications|default:"-" }}</td>
-                <td>
-                  {% if item.drawing_file %}
-                    <a href="{{ item.drawing_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">{% trans "下载" %}</a>
-                  {% else %}
-                    <span class="text-muted">{% trans "无" %}</span>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p class="text-muted">{% trans "暂无明细项" %}</p>
-    {% endif %}
-  </div>
-</div>
-
 <!-- 报价操作 -->
 <div class="card mb-3">
   <div class="card-header bg-warning">
@@ -112,19 +65,89 @@
   <div class="card-body">
     <form method="post">
       {% csrf_token %}
+
+      <!-- 产品明细及价格 -->
+      {% if inquiry.items.all %}
+        <div class="mb-4">
+          <h6 class="mb-3">{% trans "产品明细及报价" %}</h6>
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>{% trans "产品名称" %}</th>
+                  <th>{% trans "材料" %}</th>
+                  <th>{% trans "牌号" %}</th>
+                  <th>{% trans "数量" %}</th>
+                  <th>{% trans "单位" %}</th>
+                  <th>{% trans "技术规格" %}</th>
+                  <th>{% trans "图纸" %}</th>
+                  <th style="min-width: 150px;">{% trans "单价 (USD)" %} <span class="text-danger">*</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in inquiry.items.all %}
+                  <tr>
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.material_name }}</td>
+                    <td>{{ item.material_grade|default:"-" }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.specifications|default:"-" }}</td>
+                    <td>
+                      {% if item.drawing_file %}
+                        <a href="{{ item.drawing_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">{% trans "下载" %}</a>
+                      {% else %}
+                        <span class="text-muted">{% trans "无" %}</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <input type="number"
+                             name="item_{{ item.id }}_price"
+                             class="form-control"
+                             step="0.01"
+                             min="0"
+                             value="{{ item.quoted_price|default:'' }}"
+                             placeholder="{% trans '输入单价' %}"
+                             required>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% else %}
+        <p class="text-muted">{% trans "暂无明细项" %}</p>
+      {% endif %}
+
+      <!-- 交货期和备注 -->
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label class="form-label">{% trans "预计交货期" %}</label>
-          <input type="text" name="quoted_lead_time" class="form-control" value="{{ inquiry.quoted_lead_time|default:'' }}" placeholder="{% trans '例如：7-10 天' %}">
+          <label class="form-label">{% trans "预计交货期" %} <span class="text-danger">*</span></label>
+          <input type="text"
+                 name="quoted_lead_time"
+                 class="form-control"
+                 value="{{ inquiry.quoted_lead_time|default:'' }}"
+                 placeholder="{% trans '例如：7-10 天' %}"
+                 required>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">{% trans "供应商备注" %}</label>
-          <textarea name="supplier_notes" class="form-control" rows="3">{{ inquiry.supplier_notes|default:'' }}</textarea>
+          <textarea name="supplier_notes" class="form-control" rows="3" placeholder="{% trans '可选：添加备注信息' %}">{{ inquiry.supplier_notes|default:'' }}</textarea>
         </div>
       </div>
+
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> {% trans "请为每个产品填写单价（USD），并填写预计交货期后提交报价。" %}
+      </div>
+
       <div>
-        <button type="submit" class="btn btn-primary">{% trans "提交报价" %}</button>
-        <a href="{% url 'supplier_inquiry_list' %}" class="btn btn-secondary">{% trans "取消" %}</a>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i> {% trans "提交报价" %}
+        </button>
+        <a href="{% url 'supplier_inquiry_list' %}" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i> {% trans "取消" %}
+        </a>
       </div>
     </form>
   </div>
