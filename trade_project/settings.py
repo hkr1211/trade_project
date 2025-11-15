@@ -152,6 +152,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+if os.environ.get('VERCEL'):
+    MEDIA_ROOT = '/tmp/media'
+    try:
+        os.makedirs(MEDIA_ROOT, exist_ok=True)
+    except Exception:
+        pass
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -175,6 +181,7 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.supabase.co',
+    'https://trade.yj-ql.com'
 ]
 
 # 代理设置（Vercel 在负载均衡器后面）
