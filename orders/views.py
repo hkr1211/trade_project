@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.db.utils import OperationalError
 from django.db import connection
+from django.core.files.storage import default_storage
 
 from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment
 from .forms import (
@@ -497,6 +498,15 @@ def health_db(request):
         return JsonResponse({'ok': True})
     except Exception as e:
         return JsonResponse({'ok': False, 'error': str(e)}, status=500)
+
+def health_storage(request):
+    from django.conf import settings
+    storage_name = getattr(settings, 'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage')
+    try:
+        sample_url = default_storage.url('sample.txt')
+    except Exception as e:
+        sample_url = f'error: {str(e)}'
+    return JsonResponse({'default_file_storage': storage_name, 'url_example': sample_url})
 
 
 # ==================== 我的询单列表 ====================
