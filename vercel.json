@@ -1,24 +1,12 @@
 {
-  "builds": [
+  "rewrites": [
     {
-      "src": "trade_project/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
+      "source": "/run-migrate",
+      "destination": "/run_migrate.py"
     },
     {
-      "src": "run_migrate.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "^/run-migrate$",
-      "dest": "/run_migrate.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "trade_project/wsgi.py"
+      "source": "/(.*)",
+      "destination": "/trade_project/wsgi.py"
     }
   ]
 }
