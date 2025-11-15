@@ -20,5 +20,6 @@
       "src": "/(.*)",
       "dest": "trade_project/wsgi.py"
     }
-  ]
+  ],
+  "outputDirectory": "."
 }
