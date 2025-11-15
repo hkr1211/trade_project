@@ -1,24 +1,16 @@
 {
-  "builds": [
+  "rewrites": [
     {
-      "src": "trade_project/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
+      "source": "/run-migrate",
+      "destination": "/api/run_migrate"
     },
     {
-      "src": "run_migrate.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "^/run-migrate$",
-      "dest": "/run_migrate.py"
+      "source": "/create-superuser",
+      "destination": "/api/create_superuser"
     },
     {
-      "src": "/(.*)",
-      "dest": "trade_project/wsgi.py"
+      "source": "/(.*)",
+      "destination": "/api/index"
     }
   ]
 }
