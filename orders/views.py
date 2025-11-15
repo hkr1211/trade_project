@@ -395,7 +395,7 @@ def buyer_register(request):
                     )
                     
                     # 获取或创建公司记录
-                    company, _ = Company.objects.get_or_create(
+                    company, created = Company.objects.get_or_create(
                         company_name=form.cleaned_data['company_name'],
                         defaults={
                             'country': form.cleaned_data.get('country', ''),
