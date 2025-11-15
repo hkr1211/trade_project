@@ -163,6 +163,41 @@
       document.body.appendChild(s);
     }
   });
+
+  // 全局错误处理：忽略第三方 API 的证书错误（如 api.yhchj.com）
+  window.addEventListener('error', function(event) {
+    // 忽略来自第三方域名的脚本错误
+    if (event.message && event.message.indexOf('api.yhchj.com') !== -1) {
+      event.preventDefault();
+      return true;
+    }
+  }, true);
+
+  window.addEventListener('unhandledrejection', function(event) {
+    // 忽略状态码为 0 的 Promise rejection（通常是跨域或证书错误）
+    if (event.reason && typeof event.reason === 'object') {
+      if (event.reason.status === 0 || event.reason.readyState === 0) {
+        event.preventDefault();
+        return;
+      }
+    }
+  });
+
+  // 如果 jQuery 可用，捕获 AJAX 错误
+  (function checkJQuery() {
+    if (window.jQuery) {
+      jQuery(document).ajaxError(function(event, jqXHR, settings, thrownError) {
+        // 忽略来自 api.yhchj.com 的错误或状态码为 0 的错误
+        if ((settings.url && settings.url.indexOf('api.yhchj.com') !== -1) || jqXHR.status === 0) {
+          event.stopPropagation();
+          return false;
+        }
+      });
+    } else {
+      // jQuery 可能还未加载，延迟执行
+      setTimeout(checkJQuery, 100);
+    }
+  })();
 </script>
     
     {% block extra_js %}{% endblock %}
