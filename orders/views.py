@@ -10,6 +10,10 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.db.utils import OperationalError
 from django.db import connection
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment
 from .forms import (
@@ -385,10 +389,16 @@ def buyer_register(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
+                    # 检查用户是否已存在
+                    email = form.cleaned_data['email']
+                    if User.objects.filter(username=email).exists():
+                        messages.error(request, _('该邮箱已被注册。'))
+                        return render(request, 'orders/buyer_register.html', {'form': form})
+
                     # 创建用户账号（设为不活跃，等待审批）
                     user = User.objects.create_user(
-                        username=form.cleaned_data['email'],
-                        email=form.cleaned_data['email'],
+                        username=email,
+                        email=email,
                         password=form.cleaned_data['password'],
                         first_name=form.cleaned_data['name'],
                         is_active=False  # 设为不活跃，等待审批
@@ -407,6 +417,7 @@ def buyer_register(request):
                     contact = Contact.objects.create(
                         company=company,
                         user=user,
+                        role='buyer',  # 明确设置为买家角色
                         name=form.cleaned_data['name'],
                         position=form.cleaned_data.get('position', ''),
                         email=form.cleaned_data['email'],
@@ -417,6 +428,9 @@ def buyer_register(request):
                     messages.success(request, _('注册成功！您的账号正在等待管理员审批，审批通过后您将收到邮件通知。'))
                     return redirect('buyer_login')
             except Exception as e:
+                # 记录详细错误信息
+                logger.error(f'Buyer registration failed: {str(e)}')
+                logger.error(traceback.format_exc())
                 messages.error(request, _('注册失败：%(error)s') % {'error': str(e)})
     else:
         form = BuyerRegistrationForm()
