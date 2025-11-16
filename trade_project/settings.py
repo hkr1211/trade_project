@@ -147,7 +147,19 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# 在Vercel无服务器环境，使用压缩但不使用manifest（避免文件名hash和状态问题）
+if os.environ.get('VERCEL'):
+    # Vercel环境：使用压缩但不使用manifest
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+    # 禁用manifest的严格模式
+    WHITENOISE_MANIFEST_STRICT = False
+    # 允许所有来源（确保静态文件可以被加载）
+    WHITENOISE_ALLOW_ALL_ORIGINS = True
+    # 设置静态文件的max-age（30天）
+    WHITENOISE_MAX_AGE = 60 * 60 * 24 * 30
+else:
+    # 本地开发：使用WhiteNoise的压缩和manifest功能
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
