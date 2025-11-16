@@ -182,11 +182,31 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.supabase.co',
     'https://trade.yj-ql.com',
-    'https://*.yj-ql.com'
+    'https://*.yj-ql.com',
 ]
+
+# 开发环境添加本地域名
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS += [
+        'http://localhost',
+        'http://127.0.0.1',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+        'http://127.0.0.1:8080',
+    ]
 
 # 代理设置（Vercel 在负载均衡器后面）
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF Cookie 安全设置
+if DEBUG:
+    # 开发环境：允许 HTTP
+    CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_HTTPONLY = True
+else:
+    # 生产环境：强制 HTTPS
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
 
 # 生产环境的额外安全设置
 if not DEBUG:
@@ -197,10 +217,6 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'
-    
-    # Cookie 安全
-    CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_HTTPONLY = True
 
 # ==================== 日志配置（用于调试 Vercel 部署）====================
 LOGGING = {
