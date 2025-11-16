@@ -147,7 +147,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# 使用 CompressedStaticFilesStorage 避免 manifest 问题
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
