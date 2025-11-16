@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.db.utils import OperationalError
 from django.db import connection
 from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment
 from .forms import (
@@ -503,7 +504,10 @@ def health_storage(request):
     from django.conf import settings
     storage_name = getattr(settings, 'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage')
     try:
-        sample_url = default_storage.url('sample.txt')
+        path = 'healthz/sample.txt'
+        if not default_storage.exists(path):
+            default_storage.save(path, ContentFile(b'ok'))
+        sample_url = default_storage.url(path)
     except Exception as e:
         sample_url = f'error: {str(e)}'
     return JsonResponse({'default_file_storage': storage_name, 'url_example': sample_url})
