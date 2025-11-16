@@ -17,6 +17,16 @@
       "dest": "/run_migrate.py"
     },
     {
+      "src": "^/static/(.*)$",
+      "dest": "/staticfiles/$1",
+      "check": true
+    },
+    {
+      "src": "^/media/(.*)$",
+      "dest": "/media/$1",
+      "check": true
+    },
+    {
       "src": "/(.*)",
       "dest": "trade_project/wsgi.py"
     }
