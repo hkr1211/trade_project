@@ -40,15 +40,36 @@ class SupabaseStorage(Storage):
     def url(self, name):
         name = self._normalize_path(name)
         ret = self._client.storage.from_(self._bucket).get_public_url(name)
-        # supabase-py may return dict-like {"data": {"publicUrl": "..."}}
+
+        # Try to extract URL from various response formats
+        url = None
         try:
             if isinstance(ret, str):
-                return ret
-            if hasattr(ret, 'get'):
+                url = ret
+            elif hasattr(ret, 'get'):
+                # Handle dict-like response: {"data": {"publicUrl": "..."}}
                 data = ret.get('data')
                 if isinstance(data, dict):
-                    return data.get('publicUrl') or data.get('public_url') or f"{self._url}/storage/v1/object/public/{self._bucket}/{name}"
+                    url = data.get('publicUrl') or data.get('public_url')
         except Exception:
             pass
-        # Fallback to manual URL build
-        return f"{self._url}/storage/v1/object/public/{self._bucket}/{name}"
+
+        # If we got a URL from API, validate it's absolute
+        if url:
+            # If it's a relative path, convert to absolute
+            if url.startswith('/'):
+                if self._url:
+                    # Remove trailing slash from _url and leading slash from path
+                    base = self._url.rstrip('/')
+                    return f"{base}{url}"
+            elif url.startswith('http'):
+                # Already absolute URL
+                return url
+
+        # Fallback to manual URL construction
+        if self._url:
+            base = self._url.rstrip('/')
+            return f"{base}/storage/v1/object/public/{self._bucket}/{name}"
+
+        # Last resort: return relative path with bucket prefix
+        return f"/media/{name}"
