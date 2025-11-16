@@ -146,6 +146,14 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Vercel 环境：静态文件配置
+if os.environ.get('VERCEL'):
+    STATIC_ROOT = '/tmp/staticfiles'
+    try:
+        os.makedirs(STATIC_ROOT, exist_ok=True)
+    except Exception:
+        pass
+
 # WhiteNoise 配置
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
