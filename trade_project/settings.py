@@ -146,8 +146,16 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise 配置 (Django 5.x STORAGES format)
+# Use CompressedStaticFilesStorage for better Vercel compatibility
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
@@ -230,5 +238,6 @@ LOGGING = {
 }
 
 if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
-    DEFAULT_FILE_STORAGE = 'trade_project.storage_backends.SupabaseStorage'
+    # Update the default storage backend to use Supabase
+    STORAGES["default"]["BACKEND"] = 'trade_project.storage_backends.SupabaseStorage'
     MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定

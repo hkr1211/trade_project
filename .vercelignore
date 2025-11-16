@@ -1,0 +1,11 @@
+# Don't ignore staticfiles - we need them for deployment
+!staticfiles/
+
+# Ignore other files
+__pycache__/
+*.pyc
+.env
+venv/
+.vscode/
+.idea/
+db.sqlite3
