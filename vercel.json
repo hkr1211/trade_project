@@ -5,6 +5,9 @@
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb" }
     },
+    { 
+      "src": "server.py", 
+      "use": "@vercel/python" },
     {
       "src": "run_migrate.py",
       "use": "@vercel/python",
@@ -16,6 +19,9 @@
       "src": "^/run-migrate$",
       "dest": "/run_migrate.py"
     },
+    { 
+      "src": "/(.*)", 
+      "dest": "server.py" },
     {
       "src": "/(.*)",
       "dest": "trade_project/wsgi.py"
