@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
 from orders import views
+import re
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -54,4 +56,10 @@ urlpatterns = [
 
 ]
 
+# 媒体文件服务
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# 在生产环境（Vercel）也需要静态文件服务
+# WhiteNoise 会拦截这些请求并提供静态文件
+if settings.DEBUG or True:  # 总是添加静态文件路由
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

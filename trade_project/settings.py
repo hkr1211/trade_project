@@ -146,8 +146,22 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# 添加额外的静态文件目录
+STATICFILES_DIRS = []
+
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# 在 Vercel 等无服务器环境中，使用基础存储而不是 Manifest 存储
+# 因为 Manifest 需要可写的文件系统
+if os.environ.get('VERCEL') or not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    # 本地开发可以使用 Manifest 存储
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# WhiteNoise 额外配置
+WHITENOISE_USE_FINDERS = True  # 允许 WhiteNoise 使用 finders
+WHITENOISE_AUTOREFRESH = DEBUG  # 开发环境自动刷新
+WHITENOISE_STATIC_PREFIX = '/static/'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'

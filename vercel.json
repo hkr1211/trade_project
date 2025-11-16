@@ -9,12 +9,20 @@
       "src": "run_migrate.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb" }
+    },
+    {
+      "src": "staticfiles/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "^/run-migrate$",
       "dest": "/run_migrate.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/staticfiles/$1"
     },
     {
       "src": "/(.*)",
