@@ -146,8 +146,15 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise 配置 - Django 4.2+ 使用 STORAGES 设置
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
@@ -230,5 +237,6 @@ LOGGING = {
 }
 
 if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
-    DEFAULT_FILE_STORAGE = 'trade_project.storage_backends.SupabaseStorage'
+    # 使用 Supabase 存储媒体文件
+    STORAGES["default"]["BACKEND"] = 'trade_project.storage_backends.SupabaseStorage'
     MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定
