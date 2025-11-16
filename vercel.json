@@ -13,6 +13,10 @@
   ],
   "routes": [
     {
+      "src": "^/static/(.*)$",
+      "dest": "/staticfiles/$1"
+    },
+    {
       "src": "^/run-migrate$",
       "dest": "/run_migrate.py"
     },
