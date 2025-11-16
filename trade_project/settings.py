@@ -146,8 +146,24 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise 配置 - 使用常规存储后端，兼容 Vercel 无服务器环境
+# 在 Vercel 上，CompressedManifestStaticFilesStorage 不适用，因为 staticfiles 目录在部署后不存在
+# 使用 WhiteNoiseStaticFilesStorage 替代，它不依赖清单文件
+STATICFILES_STORAGE = 'whitenoise.storage.WhiteNoiseStaticFilesStorage'
+
+# WhiteNoise 中间件配置
+WHITENOISE_AUTOREFRESH = DEBUG
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_COMPRESSION_QUALITY = 85
+WHITENOISE_MIMETYPES = {
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+    '.json': 'application/json',
+    '.svg': 'image/svg+xml',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf',
+}
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
