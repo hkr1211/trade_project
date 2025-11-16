@@ -13,6 +13,13 @@
   ],
   "routes": [
     {
+      "src": "^/static/(.*)$",
+      "dest": "/staticfiles/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
       "src": "^/run-migrate$",
       "dest": "/run_migrate.py"
     },
