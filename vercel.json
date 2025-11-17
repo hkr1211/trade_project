@@ -3,10 +3,7 @@
     {
       "src": "trade_project/wsgi.py",
       "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "includeFiles": "public/static/**"
-      }
+      "config": { "maxLambdaSize": "15mb" }
     },
     {
       "src": "run_migrate.py",
@@ -18,10 +15,6 @@
     {
       "src": "^/run-migrate$",
       "dest": "/run_migrate.py"
-    },
-    {
-      "src": "^/static/(.*)$",
-      "dest": "trade_project/wsgi.py"
     },
     {
       "handle": "filesystem"
