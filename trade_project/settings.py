@@ -144,7 +144,10 @@ LOCALE_PATHS = [
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'public' / 'static'
+
+# Ensure the public/static directory exists so collectstatic can populate it during builds
+os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # WhiteNoise 配置
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
