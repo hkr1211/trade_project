@@ -34,7 +34,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        {% if request.user.contact.role == 'buyer' %}
+                        {% if user_contact and user_contact.role == 'buyer' %}
                             <!-- 买家导航 -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'buyer_dashboard' %}">{% trans "首页" %}</a>
@@ -45,7 +45,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'order_list' %}">{% trans "我的订单" %}</a>
                             </li>
-                        {% elif request.user.contact.role == 'supplier' %}
+                        {% elif user_contact and user_contact.role == 'supplier' %}
                             <!-- 供应商导航 -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'supplier_dashboard' %}">{% trans "首页" %}</a>
