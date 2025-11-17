@@ -1,6 +1,7 @@
 import os
 from django.core.files.storage import Storage
 from supabase import create_client
+from whitenoise.storage import CompressedManifestStaticFilesStorage
 
 class SupabaseStorage(Storage):
     def __init__(self, *args, **kwargs):
@@ -52,3 +53,11 @@ class SupabaseStorage(Storage):
             pass
         # Fallback to manual URL build
         return f"{self._url}/storage/v1/object/public/{self._bucket}/{name}"
+
+
+class ForgivingManifestStaticFilesStorage(CompressedManifestStaticFilesStorage):
+    """
+    自定义静态文件存储，设置 manifest_strict = False
+    这样即使某些文件不在清单中也不会报错（例如 CDN 回退文件）
+    """
+    manifest_strict = False

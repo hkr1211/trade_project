@@ -146,8 +146,8 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise 配置 - 使用自定义存储类，允许清单中不存在的文件（CDN 回退）
+STATICFILES_STORAGE = 'trade_project.storage_backends.ForgivingManifestStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
@@ -235,7 +235,7 @@ if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
             'BACKEND': 'trade_project.storage_backends.SupabaseStorage'
         },
         'staticfiles': {
-            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+            'BACKEND': 'trade_project.storage_backends.ForgivingManifestStaticFilesStorage'
         }
     }
     MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定
