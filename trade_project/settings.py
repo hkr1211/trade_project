@@ -144,14 +144,14 @@ LOCALE_PATHS = [
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR, 'staticfiles'
+STATIC_ROOT = BASE_DIR/'staticfiles'
 
 # WhiteNoise 配置
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR, 'media'
+MEDIA_ROOT = BASE_DIR/'media'
 if os.environ.get('VERCEL'):
     MEDIA_ROOT = '/tmp/media'
     try:
