@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (Company, Contact, Inquiry, InquiryItem, InquiryAttachment,
                      Order, OrderItem, OrderAttachment)
 
@@ -372,3 +373,54 @@ class OrderAdmin(admin.ModelAdmin):
                 instance.uploaded_by = request.user
             instance.save()
         formset.save_m2m()
+
+
+# ==================== 用户管理（自定义） ====================
+class CustomUserAdmin(BaseUserAdmin):
+    """自定义用户管理，添加更多批量操作"""
+
+    # 添加自定义动作
+    actions = ['activate_users', 'deactivate_users', 'make_staff', 'remove_staff',
+               'make_superuser', 'remove_superuser']
+
+    def activate_users(self, request, queryset):
+        """批量激活用户"""
+        count = queryset.update(is_active=True)
+        self.message_user(request, f'成功激活 {count} 个用户。', messages.SUCCESS)
+    activate_users.short_description = '✓ 激活选中的用户'
+
+    def deactivate_users(self, request, queryset):
+        """批量停用用户"""
+        count = queryset.update(is_active=False)
+        self.message_user(request, f'成功停用 {count} 个用户。', messages.WARNING)
+    deactivate_users.short_description = '✗ 停用选中的用户'
+
+    def make_staff(self, request, queryset):
+        """批量设置为员工"""
+        count = queryset.update(is_staff=True)
+        self.message_user(request, f'成功将 {count} 个用户设置为员工。', messages.SUCCESS)
+    make_staff.short_description = '👤 设置为员工'
+
+    def remove_staff(self, request, queryset):
+        """批量取消员工身份"""
+        count = queryset.update(is_staff=False)
+        self.message_user(request, f'成功取消 {count} 个用户的员工身份。', messages.WARNING)
+    remove_staff.short_description = '👥 取消员工身份'
+
+    def make_superuser(self, request, queryset):
+        """批量设置为超级用户"""
+        count = queryset.update(is_superuser=True, is_staff=True)
+        self.message_user(request, f'成功将 {count} 个用户设置为超级用户。', messages.SUCCESS)
+    make_superuser.short_description = '⭐ 设置为超级用户'
+
+    def remove_superuser(self, request, queryset):
+        """批量取消超级用户身份"""
+        count = queryset.update(is_superuser=False)
+        self.message_user(request, f'成功取消 {count} 个用户的超级用户身份。', messages.WARNING)
+    remove_superuser.short_description = '☆ 取消超级用户身份'
+
+
+# 取消注册默认的User管理
+admin.site.unregister(User)
+# 注册自定义的User管理
+admin.site.register(User, CustomUserAdmin)
