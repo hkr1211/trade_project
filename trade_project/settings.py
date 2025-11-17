@@ -150,7 +150,8 @@ STATIC_ROOT = BASE_DIR / 'public' / 'static'
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# 使用非 Manifest 存储以避免在部署时因缺失 manifest 造成后台 500 错误
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
