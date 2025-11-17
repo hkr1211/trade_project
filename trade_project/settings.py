@@ -144,9 +144,15 @@ LOCALE_PATHS = [
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'public' / 'static'
+static_root_env = os.environ.get('STATIC_ROOT')
+STATIC_ROOT = Path(static_root_env) if static_root_env else BASE_DIR / 'public' / 'static'
 
-# Ensure the public/static directory exists so collectstatic can populate it during builds
+# 防御性处理：避免意外传入 tuple/list 导致 WhiteNoise 报错
+if isinstance(STATIC_ROOT, (list, tuple)):
+    STATIC_ROOT = Path(*STATIC_ROOT)
+
+# WhiteNoise 接受字符串路径，统一转换后创建目录
+STATIC_ROOT = str(STATIC_ROOT)
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # WhiteNoise 配置
