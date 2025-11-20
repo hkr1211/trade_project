@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from .models import Company, Contact, Inquiry, InquiryItem, Order, OrderItem
+from .models import Company, Contact, Inquiry, InquiryItem, Order, OrderItem, Message
 
 
 # ==================== Buyer 注册表单 ====================
@@ -199,3 +199,13 @@ OrderItemFormSet = inlineformset_factory(
     extra=1,
     can_delete=False
 )
+
+
+# ==================== 沟通消息表单 ====================
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': _('输入消息...')})
+        }

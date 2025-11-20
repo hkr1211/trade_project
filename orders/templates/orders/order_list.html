@@ -16,7 +16,7 @@
     <div class="card-body">
         <form method="get" class="row g-3">
             <div class="col-md-6">
-                <input type="text" name="q" value="{{ q|default:'' }}" class="form-control" placeholder="{% trans '按订单号 / 产品名称 / 客户订单号检索' %}">
+                <input type="text" name="q" value="{{ q|default:'' }}" class="form-control" placeholder="{% trans '按订单号或产品名称或客户订单号检索' %}">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary">{% trans "检索" %}</button>

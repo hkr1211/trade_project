@@ -1,5 +1,6 @@
 {% extends 'orders/base.html' %}
 {% load i18n %}
+{% load text_filters %}
 
 {% block title %}{% trans "订单详情" %} - {{ order.order_number }}{% endblock %}
 
@@ -17,11 +18,11 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-3">
-                <strong>{% trans "订单号：" %}</strong><br>
+                <strong>{% trans "订单号" %}</strong><br>
                 {{ order.order_number }}
             </div>
             <div class="col-md-3">
-                <strong>{% trans "订单状态：" %}</strong><br>
+                <strong>{% trans "订单状态" %}</strong><br>
                 {% if order.status == 'pending' %}
                     <span class="badge bg-warning">{{ order.get_status_display }}</span>
                 {% elif order.status == 'confirmed' %}
@@ -35,7 +36,7 @@
                 {% endif %}
             </div>
             <div class="col-md-3">
-                <strong>{% trans "付款状态：" %}</strong><br>
+                <strong>{% trans "付款状态" %}</strong><br>
                 {% if order.payment_status == 'paid' %}
                     <span class="badge bg-success">{{ order.get_payment_status_display }}</span>
                 {% elif order.payment_status == 'partial' %}
@@ -45,7 +46,7 @@
                 {% endif %}
             </div>
             <div class="col-md-3">
-                <strong>{% trans "订单金额：" %}</strong><br>
+                <strong>{% trans "订单金额" %}</strong><br>
                 <h4 class="text-success">${{ order.total_amount|floatformat:2 }}</h4>
             </div>
         </div>
@@ -54,15 +55,15 @@
         
         <div class="row">
             <div class="col-md-4">
-                <strong>{% trans "创建时间：" %}</strong><br>
+                <strong>{% trans "创建时间" %}</strong><br>
                 {{ order.created_at|date:"Y-m-d H:i" }}
             </div>
             <div class="col-md-4">
-                <strong>{% trans "预计交货日期：" %}</strong><br>
+                <strong>{% trans "预计交货日期" %}</strong><br>
                 {{ order.delivery_date|date:"Y-m-d"|default:_("待确认") }}
             </div>
             <div class="col-md-4">
-                <strong>{% trans "实际发货日期：" %}</strong><br>
+                <strong>{% trans "实际发货日期" %}</strong><br>
                 {{ order.shipping_date|date:"Y-m-d"|default:"-" }}
             </div>
         </div>
@@ -71,8 +72,8 @@
             <hr>
             <div class="row">
                 <div class="col-md-12">
-                    <strong>{% trans "客户备注：" %}</strong>
-                    <p>{{ order.customer_notes }}</p>
+                    <strong>{% trans "客户备注" %}</strong>
+                    <p>{{ order.customer_notes|replace_str:"交货期（天）：|交货期(天)"|replace_str:"交货期（天）|交货期(天)" }}</p>
                 </div>
             </div>
         {% endif %}
@@ -81,7 +82,7 @@
             <hr>
             <div class="row">
                 <div class="col-md-12">
-                    <strong>{% trans "供应商备注：" %}</strong>
+                    <strong>{% trans "供应商备注" %}</strong>
                     <p>{{ order.supplier_notes }}</p>
                 </div>
             </div>
@@ -133,7 +134,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="8" class="text-end"><strong>{% trans "总计：" %}</strong></td>
+                        <td colspan="8" class="text-end"><strong>{% trans "总计" %}</strong></td>
                         <td><strong class="text-success">${{ order.total_amount|floatformat:2 }}</strong></td>
                     </tr>
                 </tfoot>
@@ -143,7 +144,7 @@
 </div>
 
 <!-- 附件列表 -->
-{% if order.attachments.count > 0 %}
+{% if order.attachments.all|length > 0 %}
 <div class="card mb-3">
     <div class="card-header">
         <h5 class="mb-0">{% trans "附件" %} ({{ order.attachments.count }})</h5>
@@ -182,8 +183,12 @@
             <input type="hidden" name="action" value="upload_payment_proof">
             <div class="col-md-8">
                 <label class="form-label">{% trans "上传汇款单或付款凭证（可选）" %}</label>
-                <input type="file" name="payment_proof" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.ppt,.pptx">
-                <small class="text-muted">{% trans "提示：部分客户为月结，无需上传付款凭证。" %}</small>
+                <div class="input-group">
+                  <input type="file" id="payment-proof" name="payment_proof" class="d-none msg-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.ppt,.pptx">
+                  <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('payment-proof').click()">{% trans "选择文件" %}</button>
+                  <span id="payment-proof-label" class="ms-2 text-muted"></span>
+                </div>
+                <small class="text-muted">{% trans "月结客户无需上传付款凭证" %}</small>
             </div>
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-outline-success">{% trans "提交付款凭证" %}</button>
@@ -193,7 +198,7 @@
         <!-- 已上传的付款凭证列表（按描述标记） -->
         <hr>
         <div>
-            <strong>{% trans "已上传的付款凭证：" %}</strong>
+            <strong>{% trans "已上传的付款凭证" %}</strong>
             <div class="list-group mt-2">
                 {% for attachment in order.attachments.all %}
                     {% if attachment.description == '付款凭证' %}
@@ -206,11 +211,11 @@
                         </div>
                     {% endif %}
                 {% empty %}
-                    <div class="text-muted">{% trans "暂无付款凭证。" %}</div>
+                    <div class="text-muted">{% trans "暂无付款凭证" %}</div>
                 {% endfor %}
             </div>
         </div>
-    </div>
+</div>
 
 <!-- 订单状态时间线 -->
 <div class="card">
@@ -241,53 +246,69 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_css %}
-<style>
-.timeline {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-}
+<!-- 沟通消息 -->
+<div class="card mt-3">
+  <div class="card-header">
+    <h5 class="mb-0">{% trans "沟通" %}</h5>
+  </div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" action="{% url 'order_message_add' order.id %}" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-8">
+        <textarea name="content" class="form-control" rows="2" placeholder="{% trans '输入消息...' %}"></textarea>
+      </div>
+      <div class="col-md-3">
+        <div class="input-group">
+          <input type="file" id="msg-files-order" name="files" class="d-none msg-file-input" multiple>
+          <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('msg-files-order').click()">{% trans "选择文件" %}</button>
+          <span id="msg-files-order-label" class="ms-2 text-muted"></span>
+        </div>
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">{% trans "发送" %}</button>
+      </div>
+    </form>
+    <hr>
+    <div class="list-group">
+      {% for msg in order.messages.all %}
+      <div class="list-group-item {% if order.contact.user and msg.sender == order.contact.user %}message-buyer{% else %}message-supplier{% endif %}">
+        <div class="d-flex justify-content-between">
+          <div>
+            <strong>{{ msg.sender.username }}</strong>
+            <span class="badge {% if order.contact.user and msg.sender == order.contact.user %}bg-primary{% else %}bg-success{% endif %} ms-2">
+              {% if order.contact.user and msg.sender == order.contact.user %}{% trans "买家" %}{% else %}{% trans "供应商" %}{% endif %}
+            </span>
+            <small class="text-muted ms-2">{{ msg.created_at|date:"Y-m-d H:i" }}</small>
+          </div>
+        </div>
+        <div class="mt-2">{{ msg.content|linebreaksbr }}</div>
+        {% if msg.attachments.count %}
+        <div class="mt-2">
+          {% for att in msg.attachments.all %}
+            <a href="{{ att.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary me-2">{{ att.file_name }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div class="text-muted">{% trans "暂无沟通消息" %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 
-.timeline::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #e0e0e0;
-    z-index: 0;
-}
+<script>
+(function(){
+  var inputs=document.querySelectorAll('.msg-file-input');
+  inputs.forEach(function(el){
+    el.addEventListener('change',function(){
+      var t=document.getElementById(el.id+'-label');
+      if(!t)return;var names=Array.from(el.files).map(function(f){return f.name});
+      t.textContent=names.length?names.join(', '):'';
+    });
+  });
+})();
+</script>
 
-.timeline-item {
-    text-align: center;
-    position: relative;
-    flex: 1;
-    padding: 0 10px;
-}
-
-.timeline-item::before {
-    content: '';
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e0e0e0;
-    display: block;
-    margin: 0 auto 10px;
-    position: relative;
-    z-index: 1;
-    border: 3px solid white;
-}
-
-.timeline-item.completed::before {
-    background: #198754;
-}
-
-.timeline-item.completed strong {
-    color: #198754;
-}
-</style>
 {% endblock %}

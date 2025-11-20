@@ -47,14 +47,29 @@ msgstr "Back to List"
 msgid "询单信息"
 msgstr "Inquiry Info"
 
-msgid "询单号："
-msgstr "Inquiry No.:"
+msgid "检索"
+msgstr "Search"
 
-msgid "客户："
-msgstr "Customer:"
+msgid "询单号"
+msgstr "Inquiry No."
 
-msgid "状态："
-msgstr "Status:"
+msgid "客户"
+msgstr "Customer"
+
+msgid "客户订单号"
+msgstr "Customer Order No."
+
+msgid "订单号"
+msgstr "Order No."
+
+msgid "订单状态"
+msgstr "Order Status"
+
+msgid "付款状态"
+msgstr "Payment Status"
+
+msgid "状态"
+msgstr "Status"
 
 msgid "待报价"
 msgstr "Pending Quote"
@@ -65,23 +80,38 @@ msgstr "Quoted"
 msgid "已接受"
 msgstr "Accepted"
 
-msgid "创建时间："
-msgstr "Created At:"
+msgid "创建时间"
+msgstr "Created At"
 
-msgid "客户交货期要求："
-msgstr "Customer Delivery Requirement:"
+msgid "客户交货期要求"
+msgstr "Customer Delivery Requirement"
 
 msgid "未填写"
 msgstr "Not Provided"
 
-msgid "客户备注："
-msgstr "Customer Notes:"
+msgid "客户备注"
+msgstr "Customer Notes"
 
 msgid "无"
 msgstr "None"
 
 msgid "产品明细"
-msgstr "Items"
+msgstr "Description"
+
+msgid "产品数量"
+msgstr "Quantity"
+
+msgid "报价金额"
+msgstr "Quotation Amount"
+
+msgid "操作"
+msgstr "Action"
+
+msgid "查看"
+msgstr "View"
+
+msgid "项"
+msgstr "items"
 
 msgid "产品名称"
 msgstr "Product Name"
@@ -112,6 +142,9 @@ msgstr "No items"
 
 msgid "报价操作"
 msgstr "Quotation"
+
+msgid "订单操作"
+msgstr "Order Action"
 
 msgid "预计交货期"
 msgstr "Estimated Lead Time"
@@ -156,14 +189,131 @@ msgstr "Add Item"
 msgid "基本信息"
 msgstr "Basic Info"
 
-msgid "交货期（天）"
+msgid "更新时间"
+msgstr "Update Date"
+
+msgid "交货期要求"
+msgstr "Required Delivery Time"
+
+msgid "供应商报价"
+msgstr "Supplier Quote"
+
+msgid "报工期"
+msgstr "Lead Time"
+
+msgid "报价时间"
+msgstr "Quote Time"
+
+msgid "报价总额"
+msgstr "Total Amount"
+
+msgid "报价单价"
+msgstr "Price"
+
+msgid "联系人"
+msgstr "Contact"
+
+msgid "交货期(天)"
 msgstr "Delivery (days)"
+
+msgid "日"
+msgstr "dd"
+
+msgid "预计交货日期"
+msgstr "Expected Delivery Date"
+
+msgid "订单金额"
+msgstr "Amount"
 
 msgid "备注"
 msgstr "Notes"
 
 msgid "附件上传（可选）"
 msgstr "Attachments (optional)"
+
+msgid "附件"
+msgstr "Attachments"
+
+msgid "订单详情"
+msgstr "Order Detail"
+
+msgid "订单信息"
+msgstr "Order Info"
+
+msgid "单价"
+msgstr "Price"
+
+msgid "小计"
+msgstr "Subtotal"
+
+msgid "付款凭证（可选）"
+msgstr "Payment Proof (Optional)"
+
+msgid "上传汇款单或付款凭证（可选）"
+msgstr "Upload the Remittance Slip or Proof of Payment (Optional)"
+
+msgid "选择文件"
+msgstr "Select File"
+
+msgid "未完成"
+msgstr "Incomplete" 
+
+msgid "未发货"
+msgstr "Unshipped" 
+
+msgid "未选择任何文件"
+msgstr "No file selected"
+
+msgid "提交付款凭证"
+msgstr "Submit Proof of Payment"
+
+msgid "已上传的付款凭证"
+msgstr "Submited Proof of Payment"
+
+msgid "暂无付款凭证"
+msgstr "No payment proof available"
+
+msgid "订单进度"
+msgstr "Order Status"
+
+msgid "订单创建"
+msgstr "Order Create"
+
+msgid "订单确认"
+msgstr "Order Confirmed"
+
+msgid "您可以根据供应商的报价直接创建正式订单"
+msgstr "You can create a formal order directly based on the supplier’s quotation."
+
+msgid "创建订单"
+msgstr "Create Order"
+
+msgid "沟通"
+msgstr "Messages"
+
+msgid "买家"
+msgstr "Buyer"
+
+msgid "供应商"
+msgstr "Supplier"
+
+msgid "输入消息..."
+msgstr "Input message..."
+
+msgid "发送"
+msgstr "Send"
+
+msgid "订单完成"
+msgstr "Order Completed"
+
+msgid "个"
+msgstr "pcs"
+
+msgid "按订单号或产品名称或客户订单号检索"
+msgstr "Search by Order No. or Product Name or Customer PO No."
+
+msgid "按询单号或产品名称检索"
+msgstr "Search by Inquiry No. or Product Name"
 
 msgid "上传多个文件"
 msgstr "Upload multiple files"
@@ -174,11 +324,40 @@ msgstr "You can select multiple files; supported: PDF, JPG, PNG, DWG, DXF, PPT, 
 msgid "提交询单"
 msgstr "Submit Inquiry"
 
+msgid "实际发货日期"
+msgstr "Actual Dispatch Date"
+
 msgid "找不到表单模板"
 msgstr "Form template not found"
 
+msgid "月结客户无需上传付款凭证"
+msgstr "Buyers on monthly billing accounts are not required to upload payment proof."
+
 msgid "至少需要保留一个产品"
 msgstr "At least one item is required"
+
+msgid "确认订单"
+msgstr "Confirm Order"
+
+msgid "标记为已发货"
+msgstr "Mark as Shipped"
+
+msgid "确认收款"
+msgstr "Confirm Receipt of Payment"
+
+msgid "标记为已完成"
+msgstr "Mark as Completed"
+
+msgid "更新备注"
+msgstr "Update Notes"
+
+msgid "提交更新"
+msgstr "Submit Updates"
+
+
+msgid "完成前需确认收款，未确认不可完成。"
+msgstr "Payment must be confirmed before completion. The order cannot be completed without confirmation."
+
 msgid "我的仪表板"
 msgstr "My Dashboard"
 
@@ -201,6 +380,33 @@ msgstr "Total Orders"
 
 msgid "待确认订单"
 msgstr "Pending Orders"
+
+msgid "已确认"
+msgstr "Confirmed"
+
+msgid "已发货"
+msgstr "Shipped"
+
+msgid "已完成"
+msgstr "Completed"
+
+msgid "待确认"
+msgstr "Pending Orders"
+
+msgid "已确认（生产中）"
+msgstr "Confirmed(Processing)"
+
+msgid "未付款"
+msgstr "Unpaid"
+
+msgid "总计"
+msgstr "Total"
+
+msgid "部分付款"
+msgstr "Partially Paid"
+
+msgid "已付款"
+msgstr "Paid"
 
 msgid "最近询单"
 msgstr "Recent Inquiries"
@@ -240,8 +446,11 @@ msgstr "Entry for purchasers and customers"
 msgid "买家注册"
 msgstr "Buyer Register"
 
-msgid "买家功能："
-msgstr "Buyer Features:"
+msgid "订单管理"
+msgstr "Order Management"
+
+msgid "买家功能"
+msgstr "Buyer Features"
 
 msgid "提交询单、查看报价、创建订单、跟踪订单状态"
 msgstr "Submit inquiries, view quotes, create orders, track order status"
@@ -255,8 +464,8 @@ msgstr "Wenjie Metals supplier login entry"
 msgid "供应商注册"
 msgstr "Supplier Register"
 
-msgid "供应商功能："
-msgstr "Supplier Features:"
+msgid "供应商功能"
+msgstr "Supplier Features"
 
 msgid "查看询单、提供报价、处理订单、更新订单状态"
 msgstr "View inquiries, provide quotes, process orders, update order status"

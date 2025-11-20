@@ -47,14 +47,11 @@ msgstr "一覧へ戻る"
 msgid "询单信息"
 msgstr "問い合わせ情報"
 
-msgid "询单号："
-msgstr "問い合わせ番号："
 
-msgid "客户："
-msgstr "顧客："
 
-msgid "状态："
-msgstr "ステータス："
+
+
+
 
 msgid "待报价"
 msgstr "見積り待ち"
@@ -65,17 +62,14 @@ msgstr "見積り済み"
 msgid "已接受"
 msgstr "受注済み"
 
-msgid "创建时间："
-msgstr "作成日時："
 
-msgid "客户交货期要求："
-msgstr "顧客希望納期："
+
+
 
 msgid "未填写"
 msgstr "未記入"
 
-msgid "客户备注："
-msgstr "顧客メモ："
+
 
 msgid "无"
 msgstr "なし"
@@ -156,8 +150,7 @@ msgstr "製品追加"
 msgid "基本信息"
 msgstr "基本情報"
 
-msgid "交货期（天）"
-msgstr "納期（日）"
+
 
 msgid "备注"
 msgstr "備考"
@@ -238,8 +231,7 @@ msgstr "購買担当・顧客のログイン入口"
 msgid "买家注册"
 msgstr "バイヤー登録"
 
-msgid "买家功能："
-msgstr "バイヤー機能："
+
 
 msgid "提交询单、查看报价、创建订单、跟踪订单状态"
 msgstr "見積依頼の提出、見積確認、注文作成、注文状況の追跡"
@@ -253,8 +245,7 @@ msgstr "蘊杰金属サプライヤーのログイン入口"
 msgid "供应商注册"
 msgstr "サプライヤー登録"
 
-msgid "供应商功能："
-msgstr "サプライヤー機能："
+
 
 msgid "查看询单、提供报价、处理订单、更新订单状态"
 msgstr "見積依頼の確認、見積提示、注文処理、注文状況の更新"
@@ -296,3 +287,249 @@ msgstr "多言語サポート"
 
 msgid "提交询价单，上传图纸，查看供应商报价"
 msgstr "見積依頼の提出、図面のアップロード、サプライヤー見積の確認"
+# Orders / Detail & Lists (sync with en)
+msgid "订单详情"
+msgstr "受注詳細"
+
+msgid "订单信息"
+msgstr "受注情報"
+
+msgid "订单号"
+msgstr "受注番号"
+
+msgid "订单状态"
+msgstr "受注ステータス"
+
+msgid "付款状态"
+msgstr "支払ステータス"
+
+msgid "联系人"
+msgstr "担当者"
+
+msgid "预计交货日期"
+msgstr "納期予定日"
+
+msgid "订单金额"
+msgstr "注文金額"
+
+msgid "单价"
+msgstr "単価"
+
+msgid "小计"
+msgstr "小計"
+
+msgid "付款凭证（可选）"
+msgstr "支払証憑（任意）"
+
+
+
+msgid "选择文件"
+msgstr "ファイルを選択"
+
+msgid "未选择任何文件"
+msgstr "ファイルは未選択です"
+
+msgid "提交付款凭证"
+msgstr "支払証憑を送信"
+
+msgid "订单进度"
+msgstr "受注進捗"
+
+msgid "订单创建"
+msgstr "受注作成"
+
+msgid "订单确认"
+msgstr "受注確認"
+
+msgid "订单完成"
+msgstr "受注完了"
+
+msgid "创建订单"
+msgstr "注文を作成"
+# Actions & statuses (sync with en)
+msgid "确认订单"
+msgstr "受注確定"
+
+msgid "标记为已发货"
+msgstr "出荷済みにする"
+
+msgid "确认收款"
+msgstr "入金確認"
+
+msgid "标记为已完成"
+msgstr "完了にする"
+
+msgid "更新备注"
+msgstr "メモ更新"
+
+msgid "提交更新"
+msgstr "更新送信"
+
+msgid "未完成"
+msgstr "未完了"
+
+msgid "未发货"
+msgstr "未出荷"
+
+msgid "部分付款"
+msgstr "一部入金"
+
+msgid "已付款"
+msgstr "入金済み"
+
+msgid "订单进度"
+msgstr "受注進捗"
+
+msgid "订单创建"
+msgstr "受注作成"
+
+msgid "订单确认"
+msgstr "受注確認"
+
+msgid "订单完成"
+msgstr "受注完了"
+
+msgid "沟通"
+msgstr "メッセージ"
+
+msgid "买家"
+msgstr "買い手"
+
+msgid "供应商"
+msgstr "サプライヤー"
+
+msgid "输入消息..."
+msgstr "メッセージを入力..."
+
+msgid "发送"
+msgstr "送信"
+msgid "上传汇款单或付款凭证（可选）"
+msgstr "送金明細または支払証憑のアップロード（任意）"
+msgid "检索"
+msgstr "検索"
+
+msgid "询单号"
+msgstr "問い合わせ番号"
+
+msgid "客户"
+msgstr "顧客"
+
+msgid "客户订单号"
+msgstr "顧客注文番号"
+
+msgid "状态"
+msgstr "ステータス"
+
+msgid "创建时间"
+msgstr "作成日時"
+
+msgid "客户交货期要求"
+msgstr "顧客希望納期"
+
+msgid "客户备注"
+msgstr "顧客メモ"
+
+msgid "产品数量"
+msgstr "製品数量"
+
+msgid "报价金额"
+msgstr "見積金額"
+
+msgid "操作"
+msgstr "操作"
+
+msgid "查看"
+msgstr "表示"
+
+msgid "项"
+msgstr "件"
+
+msgid "订单操作"
+msgstr "受注操作"
+
+msgid "更新时间"
+msgstr "更新日時"
+
+msgid "交货期要求"
+msgstr "納期要求"
+
+msgid "供应商报价"
+msgstr "サプライヤー見積"
+
+msgid "报工期"
+msgstr "工期"
+
+msgid "报价时间"
+msgstr "見積日時"
+
+msgid "报价总额"
+msgstr "見積総額"
+
+msgid "报价单价"
+msgstr "見積単価"
+
+msgid "交货期(天)"
+msgstr "納期（日）"
+
+msgid "日"
+msgstr "日"
+
+msgid "附件"
+msgstr "添付ファイル"
+
+msgid "已上传的付款凭证"
+msgstr "アップロード済みの支払証憑"
+
+msgid "暂无付款凭证"
+msgstr "支払証憑はありません"
+
+msgid "您可以根据供应商的报价直接创建正式订单"
+msgstr "サプライヤーの見積に基づき正式注文を作成できます"
+
+msgid "个"
+msgstr "個"
+
+msgid "按订单号或产品名称或客户订单号检索"
+msgstr "注文番号・製品名・顧客注文番号で検索"
+
+msgid "按询单号或产品名称检索"
+msgstr "問い合わせ番号・製品名で検索"
+
+msgid "实际发货日期"
+msgstr "実際出荷日"
+
+msgid "月结客户无需上传付款凭证"
+msgstr "月次締めの顧客は支払証憑のアップロード不要"
+
+msgid "完成前需确认收款，未确认不可完成。"
+msgstr "完了前に入金確認が必要です。未確認では完了できません。"
+
+msgid "已确认"
+msgstr "確認済み"
+
+msgid "已发货"
+msgstr "出荷済み"
+
+msgid "已完成"
+msgstr "完了"
+
+msgid "待确认"
+msgstr "確認待ち"
+
+msgid "已确认（生产中）"
+msgstr "確認済み（生産中）"
+
+msgid "未付款"
+msgstr "未入金"
+
+msgid "总计"
+msgstr "合計"
+
+msgid "订单管理"
+msgstr "受注管理"
+
+msgid "买家功能"
+msgstr "バイヤー機能"
+
+msgid "供应商功能"
+msgstr "サプライヤー機能"

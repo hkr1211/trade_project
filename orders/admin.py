@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from .models import (Company, Contact, Inquiry, InquiryItem, InquiryAttachment,
                      Order, OrderItem, OrderAttachment)
 
@@ -372,3 +373,58 @@ class OrderAdmin(admin.ModelAdmin):
                 instance.uploaded_by = request.user
             instance.save()
         formset.save_m2m()
+
+
+# ==================== 用户管理批量动作 ====================
+@admin.action(description='✓ 批量激活选中用户')
+def activate_users(modeladmin, request, queryset):
+    updated = queryset.update(is_active=True)
+    messages.success(request, f'已激活 {updated} 个用户')
+
+
+@admin.action(description='✗ 批量禁用选中用户')
+def deactivate_users(modeladmin, request, queryset):
+    updated = queryset.update(is_active=False)
+    messages.success(request, f'已禁用 {updated} 个用户')
+
+
+@admin.action(description='👤 设为工作人员（is_staff=True）')
+def grant_staff(modeladmin, request, queryset):
+    updated = queryset.update(is_staff=True)
+    messages.success(request, f'已设为工作人员 {updated} 个用户')
+
+
+@admin.action(description='🚫 取消工作人员（is_staff=False）')
+def revoke_staff(modeladmin, request, queryset):
+    updated = queryset.update(is_staff=False)
+    messages.success(request, f'已取消工作人员 {updated} 个用户')
+
+
+@admin.action(description='⭐ 设为超级用户（is_superuser=True）')
+def grant_superuser(modeladmin, request, queryset):
+    updated = queryset.update(is_superuser=True)
+    messages.success(request, f'已设为超级用户 {updated} 个')
+
+
+@admin.action(description='⬇ 取消超级用户（is_superuser=False）')
+def revoke_superuser(modeladmin, request, queryset):
+    updated = queryset.update(is_superuser=False)
+    messages.success(request, f'已取消超级用户 {updated} 个')
+
+
+class UserAdmin(DjangoUserAdmin):
+    actions = [
+        activate_users,
+        deactivate_users,
+        grant_staff,
+        revoke_staff,
+        grant_superuser,
+        revoke_superuser,
+    ]
+    actions_on_top = True
+    actions_on_bottom = True
+    actions_selection_counter = True
+
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

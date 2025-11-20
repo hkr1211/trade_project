@@ -375,3 +375,41 @@ class OrderAttachment(models.Model):
             return f"{size / 1024:.1f} KB"
         else:
             return f"{size / (1024 * 1024):.1f} MB"
+
+
+# ==================== 沟通消息 ====================
+class Message(models.Model):
+    inquiry = models.ForeignKey('Inquiry', on_delete=models.CASCADE, related_name='messages', null=True, blank=True, verbose_name=_('关联询单'))
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='messages', null=True, blank=True, verbose_name=_('关联订单'))
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('发送人'))
+    content = models.TextField(_('内容'), blank=True)
+    created_at = models.DateTimeField(_('发送时间'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('沟通消息')
+        verbose_name_plural = _('沟通消息')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        target = self.inquiry and f"INQ:{self.inquiry.inquiry_number}" or (self.order and f"ORD:{self.order.order_number}" or '')
+        return f"{target} - {self.sender.username}"
+
+
+class MessageAttachment(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='attachments', verbose_name=_('消息'))
+    file = models.FileField(_('文件'), upload_to='attachments/messages/%Y/%m/', validators=[validate_file_extension, validate_file_size])
+    file_name = models.CharField(_('文件名称'), max_length=255, blank=True)
+    file_size = models.IntegerField(_('文件大小(字节)'), default=0)
+    uploaded_at = models.DateTimeField(_('上传时间'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('消息附件')
+        verbose_name_plural = _('消息附件')
+        ordering = ['-uploaded_at']
+
+    def save(self, *args, **kwargs):
+        if self.file:
+            if not self.file_name:
+                self.file_name = os.path.basename(self.file.name)
+            self.file_size = self.file.size
+        super().save(*args, **kwargs)

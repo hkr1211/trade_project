@@ -14,7 +14,7 @@ from django.db import connection
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
-from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment
+from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment, Message, MessageAttachment
 from .forms import (
     BuyerRegistrationForm, 
     InquiryForm, 
@@ -502,15 +502,15 @@ def health_db(request):
 
 def health_storage(request):
     from django.conf import settings
-    storage_name = getattr(settings, 'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage')
+    backend = default_storage.__class__.__module__ + '.' + default_storage.__class__.__name__
     try:
         path = 'healthz/sample.txt'
         if not default_storage.exists(path):
             default_storage.save(path, ContentFile(b'ok'))
         sample_url = default_storage.url(path)
+        return JsonResponse({'default_file_storage': backend, 'url_example': sample_url})
     except Exception as e:
-        sample_url = f'error: {str(e)}'
-    return JsonResponse({'default_file_storage': storage_name, 'url_example': sample_url})
+        return JsonResponse({'default_file_storage': backend, 'url_example': f'error: {str(e)}'})
 
 
 # ==================== 我的询单列表 ====================
@@ -692,6 +692,46 @@ def order_detail(request, order_id):
         'contact': contact,
         'order': order
     })
+
+
+# ==================== 询单消息发送 ====================
+@login_required
+def inquiry_message_add(request, inquiry_id):
+    contact = get_object_or_404(Contact, user=request.user)
+    inquiry = get_object_or_404(Inquiry, id=inquiry_id)
+    if request.method == 'POST':
+        content = (request.POST.get('content') or '').strip()
+        try:
+            with transaction.atomic():
+                msg = Message.objects.create(inquiry=inquiry, sender=request.user, content=content)
+                for f in request.FILES.getlist('files'):
+                    MessageAttachment.objects.create(message=msg, file=f, file_name=getattr(f, 'name', ''))
+            messages.success(request, _('消息已发送'))
+        except Exception as e:
+            messages.error(request, _('发送失败：%(error)s') % {'error': str(e)})
+    if contact.role == 'supplier':
+        return redirect('supplier_inquiry_detail', inquiry_id=inquiry.id)
+    return redirect('inquiry_detail', inquiry_id=inquiry.id)
+
+
+# ==================== 订单消息发送 ====================
+@login_required
+def order_message_add(request, order_id):
+    contact = get_object_or_404(Contact, user=request.user)
+    order = get_object_or_404(Order, id=order_id)
+    if request.method == 'POST':
+        content = (request.POST.get('content') or '').strip()
+        try:
+            with transaction.atomic():
+                msg = Message.objects.create(order=order, sender=request.user, content=content)
+                for f in request.FILES.getlist('files'):
+                    MessageAttachment.objects.create(message=msg, file=f, file_name=getattr(f, 'name', ''))
+            messages.success(request, _('消息已发送'))
+        except Exception as e:
+            messages.error(request, _('发送失败：%(error)s') % {'error': str(e)})
+    if contact.role == 'supplier':
+        return redirect('supplier_order_detail', order_id=order.id)
+    return redirect('order_detail', order_id=order.id)
 
 
 # ==================== 创建订单 ====================

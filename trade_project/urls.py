@@ -24,11 +24,13 @@ urlpatterns = [
     path('buyer/inquiries/', views.inquiry_list, name='inquiry_list'),
     path('buyer/inquiries/create/', views.inquiry_create, name='inquiry_create'),
     path('buyer/inquiries/<int:inquiry_id>/', views.inquiry_detail, name='inquiry_detail'),
+    path('buyer/inquiries/<int:inquiry_id>/message/', views.inquiry_message_add, name='inquiry_message_add'),
     
     # Buyer 订单管理
     path('buyer/orders/', views.order_list, name='order_list'),
     path('buyer/orders/create/', views.order_create, name='order_create'),
     path('buyer/orders/<int:order_id>/', views.order_detail, name='order_detail'),
+    path('buyer/orders/<int:order_id>/message/', views.order_message_add, name='order_message_add'),
     
     # Supplier 认证
     path('supplier/register/', views.supplier_register, name='supplier_register'),

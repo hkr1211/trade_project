@@ -17,11 +17,11 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-3">
-                <strong>{% trans "询单号：" %}</strong><br>
+                <strong>{% trans "询单号" %}</strong><br>
                 {{ inquiry.inquiry_number }}
             </div>
             <div class="col-md-3">
-                <strong>{% trans "状态：" %}</strong><br>
+                <strong>{% trans "状态" %}</strong><br>
                 {% if inquiry.status == 'pending' %}
                     <span class="badge bg-warning">{{ inquiry.get_status_display }}</span>
                 {% elif inquiry.status == 'quoted' %}
@@ -33,11 +33,11 @@
                 {% endif %}
             </div>
             <div class="col-md-3">
-                <strong>{% trans "创建时间：" %}</strong><br>
+                <strong>{% trans "创建时间" %}</strong><br>
                 {{ inquiry.created_at|date:"Y-m-d H:i" }}
             </div>
             <div class="col-md-3">
-                <strong>{% trans "更新时间：" %}</strong><br>
+                <strong>{% trans "更新时间" %}</strong><br>
                 {{ inquiry.updated_at|date:"Y-m-d H:i" }}
             </div>
         </div>
@@ -46,7 +46,7 @@
             <hr>
             <div class="row">
                 <div class="col-md-12">
-                    <strong>{% trans "交货期要求：" %}</strong>
+                    <strong>{% trans "交货期要求" %}</strong>
                     <p>{{ inquiry.delivery_requirement }}</p>
                 </div>
             </div>
@@ -56,7 +56,7 @@
             <hr>
             <div class="row">
                 <div class="col-md-12">
-                    <strong>{% trans "客户备注：" %}</strong>
+                    <strong>{% trans "客户备注" %}</strong>
                     <p>{{ inquiry.customer_notes }}</p>
                 </div>
             </div>
@@ -73,15 +73,15 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
-                <strong>{% trans "报工期：" %}</strong><br>
+                <strong>{% trans "报工期" %}</strong><br>
                 {{ inquiry.quoted_lead_time|default:"-" }}
             </div>
             <div class="col-md-4">
-                <strong>{% trans "报价时间：" %}</strong><br>
+                <strong>{% trans "报价时间" %}</strong><br>
                 {{ inquiry.quoted_at|date:"Y-m-d H:i"|default:"-" }}
             </div>
             <div class="col-md-4">
-                <strong>{% trans "报价总额：" %}</strong><br>
+                <strong>{% trans "报价总额" %}</strong><br>
                 <h4 class="text-success">${{ inquiry.total_amount|floatformat:2 }}</h4>
             </div>
         </div>
@@ -156,7 +156,7 @@
                 {% if inquiry.status == 'quoted' or inquiry.status == 'accepted' %}
                     <tfoot>
                         <tr>
-                            <td colspan="8" class="text-end"><strong>{% trans "总计：" %}</strong></td>
+                            <td colspan="8" class="text-end"><strong>{% trans "总计" %}</strong></td>
                             <td><strong class="text-success">${{ inquiry.total_amount|floatformat:2 }}</strong></td>
                         </tr>
                     </tfoot>
@@ -194,10 +194,83 @@
 </div>
 {% endif %}
 
+<!-- 沟通消息 -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{% trans "沟通" %}</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" action="{% url 'inquiry_message_add' inquiry.id %}" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-8">
+                <textarea name="content" class="form-control" rows="2" placeholder="{% trans '输入消息...' %}"></textarea>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <input type="file" id="msg-files-inquiry" name="files" class="d-none msg-file-input" multiple>
+                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('msg-files-inquiry').click()">{% trans "选择文件" %}</button>
+                    <span id="msg-files-inquiry-label" class="ms-2 text-muted"></span>
+                </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">{% trans "发送" %}</button>
+            </div>
+        </form>
+        <hr>
+        <div class="list-group">
+            {% for msg in inquiry.messages.all %}
+            <div class="list-group-item {% if inquiry.contact.user and msg.sender == inquiry.contact.user %}message-buyer{% else %}message-supplier{% endif %}">
+                <div class="d-flex justify-content-between">
+                    <div>
+                      <strong>{{ msg.sender.username }}</strong>
+                      <span class="badge {% if inquiry.contact.user and msg.sender == inquiry.contact.user %}bg-primary{% else %}bg-success{% endif %} ms-2">
+                        {% if inquiry.contact.user and msg.sender == inquiry.contact.user %}{% trans "买家" %}{% else %}{% trans "供应商" %}{% endif %}
+                      </span>
+                      <small class="text-muted ms-2">{{ msg.created_at|date:"Y-m-d H:i" }}</small>
+                    </div>
+                </div>
+                <div class="mt-2">{{ msg.content|linebreaksbr }}</div>
+                {% if msg.attachments.count %}
+                <div class="mt-2">
+                    {% for att in msg.attachments.all %}
+                        <a href="{{ att.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary me-2">{{ att.file_name }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-muted">{% trans "暂无沟通消息" %}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+(function(){
+  var inputs=document.querySelectorAll('.msg-file-input');
+  inputs.forEach(function(el){
+    el.addEventListener('change',function(){
+      var t=document.getElementById(el.id+'-label');
+      if(!t)return;var names=Array.from(el.files).map(function(f){return f.name});
+      t.textContent=names.length?names.join(', '):'';
+    });
+  });
+})();
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.message-buyer { border-left: 4px solid #0d6efd; }
+.message-supplier { border-left: 4px solid #198754; }
+</style>
+{% endblock %}
+
 <!-- {% trans "操作按钮" %} -->
 {% if inquiry.status == 'quoted' %}
 <div class="alert alert-info">
-    <strong>{% trans "供应商已报价！" %}</strong> {% trans "如果您接受此报价，可以直接创建订单。" %}
+    <strong>{% trans "您可以根据供应商的报价直接创建正式订单" %}</strong>
     <div class="mt-2">
         <a href="{% url 'order_create' %}" class="btn btn-success">{% trans "创建订单" %}</a>
     </div>

@@ -27,5 +27,5 @@
       "dest": "trade_project/wsgi.py"
     }
   ],
-  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+  "buildCommand": "pybabel compile -d locale && pip install -r requirements.txt && python manage.py collectstatic --noinput"
 }

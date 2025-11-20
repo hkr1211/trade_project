@@ -17,15 +17,15 @@
   <div class="card-body">
     <div class="row">
       <div class="col-md-3">
-        <strong>{% trans "询单号：" %}</strong><br>
+        <strong>{% trans "询单号" %}</strong><br>
         {{ inquiry.inquiry_number }}
       </div>
       <div class="col-md-3">
-        <strong>{% trans "客户：" %}</strong><br>
+        <strong>{% trans "客户" %}</strong><br>
         {{ inquiry.contact.company.company_name }}
       </div>
       <div class="col-md-3">
-        <strong>{% trans "状态：" %}</strong><br>
+        <strong>{% trans "状态" %}</strong><br>
         {% if inquiry.status == 'pending' %}
           <span class="badge bg-warning">{% trans "待报价" %}</span>
         {% elif inquiry.status == 'quoted' %}
@@ -37,7 +37,7 @@
         {% endif %}
       </div>
       <div class="col-md-3">
-        <strong>{% trans "创建时间：" %}</strong><br>
+        <strong>{% trans "创建时间" %}</strong><br>
         {{ inquiry.created_at|date:"Y-m-d H:i" }}
       </div>
     </div>
@@ -46,11 +46,11 @@
 
     <div class="row">
       <div class="col-md-6">
-        <strong>{% trans "客户交货期要求：" %}</strong><br>
+        <strong>{% trans "客户交货期要求" %}</strong><br>
         {{ inquiry.delivery_requirement|default:_("未填写") }}
       </div>
       <div class="col-md-6">
-        <strong>{% trans "客户备注：" %}</strong><br>
+        <strong>{% trans "客户备注" %}</strong><br>
         {{ inquiry.customer_notes|default:_("无") }}
       </div>
     </div>
@@ -122,6 +122,35 @@
           <textarea name="supplier_notes" class="form-control" rows="3">{{ inquiry.supplier_notes|default:'' }}</textarea>
         </div>
       </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "明细单价(USD)" %}</label>
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>{% trans "产品名称" %}</th>
+                <th>{% trans "材料" %}</th>
+                <th>{% trans "数量" %}</th>
+                <th>{% trans "当前报价" %}</th>
+                <th>{% trans "输入单价(USD)" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in inquiry.items.all %}
+              <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.material_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{% if item.quoted_price %}${{ item.quoted_price }}{% else %}-{% endif %}</td>
+                <td>
+                  <input type="number" name="item_{{ item.id }}_price" class="form-control" step="0.01" min="0" value="{% if item.quoted_price %}{{ item.quoted_price }}{% endif %}" placeholder="{% trans '输入单价' %}">
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
       <div>
         <button type="submit" class="btn btn-primary">{% trans "提交报价" %}</button>
         <a href="{% url 'supplier_inquiry_list' %}" class="btn btn-secondary">{% trans "取消" %}</a>
@@ -129,5 +158,78 @@
     </form>
   </div>
 </div>
+
+<!-- 沟通消息 -->
+<div class="card mb-3">
+  <div class="card-header">
+    <h5 class="mb-0">{% trans "沟通" %}</h5>
+  </div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" action="{% url 'inquiry_message_add' inquiry.id %}" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-8">
+        <textarea name="content" class="form-control" rows="2" placeholder="{% trans '输入消息...' %}"></textarea>
+      </div>
+      <div class="col-md-3">
+        <div class="input-group">
+          <input type="file" id="msg-files-supplier-inquiry" name="files" class="d-none msg-file-input" multiple>
+          <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('msg-files-supplier-inquiry').click()">{% trans "选择文件" %}</button>
+          <span id="msg-files-supplier-inquiry-label" class="ms-2 text-muted"></span>
+        </div>
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">{% trans "发送" %}</button>
+      </div>
+    </form>
+    <hr>
+    <div class="list-group">
+      {% for msg in inquiry.messages.all %}
+      <div class="list-group-item {% if inquiry.contact.user and msg.sender == inquiry.contact.user %}message-buyer{% else %}message-supplier{% endif %}">
+        <div class="d-flex justify-content-between">
+          <div>
+            <strong>{{ msg.sender.username }}</strong>
+            <span class="badge {% if inquiry.contact.user and msg.sender == inquiry.contact.user %}bg-primary{% else %}bg-success{% endif %} ms-2">
+              {% if inquiry.contact.user and msg.sender == inquiry.contact.user %}{% trans "买家" %}{% else %}{% trans "供应商" %}{% endif %}
+            </span>
+            <small class="text-muted ms-2">{{ msg.created_at|date:"Y-m-d H:i" }}</small>
+          </div>
+        </div>
+        <div class="mt-2">{{ msg.content|linebreaksbr }}</div>
+        {% if msg.attachments.count %}
+        <div class="mt-2">
+          {% for att in msg.attachments.all %}
+            <a href="{{ att.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary me-2">{{ att.file_name }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div class="text-muted">{% trans "暂无沟通消息" %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% block extra_css %}
+<style>
+.message-buyer { border-left: 4px solid #0d6efd; }
+.message-supplier { border-left: 4px solid #198754; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  var inputs=document.querySelectorAll('.msg-file-input');
+  inputs.forEach(function(el){
+    el.addEventListener('change',function(){
+      var t=document.getElementById(el.id+'-label');
+      if(!t)return;var names=Array.from(el.files).map(function(f){return f.name});
+      t.textContent=names.length?names.join(', '):'';
+    });
+  });
+})();
+</script>
+{% endblock %}
 
 {% endblock %}
