@@ -384,37 +384,39 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 # ==================== 用户管理批量动作 ====================
-@admin.action(description='✓ 批量激活选中用户', permissions=['change', 'delete'])
+# 将 permissions=['change', 'delete'] 修改为 permissions=['change']
+
+@admin.action(description='✓ 批量激活选中用户', permissions=['change'])  # 修改此处
 def activate_users(modeladmin, request, queryset):
     updated = queryset.update(is_active=True)
     messages.success(request, f'已激活 {updated} 个用户')
 
 
-@admin.action(description='✗ 批量禁用选中用户', permissions=['change', 'delete'])
+@admin.action(description='✗ 批量禁用选中用户', permissions=['change'])  # 修改此处
 def deactivate_users(modeladmin, request, queryset):
     updated = queryset.update(is_active=False)
     messages.success(request, f'已禁用 {updated} 个用户')
 
 
-@admin.action(description='👤 设为工作人员（is_staff=True）', permissions=['change', 'delete'])
+@admin.action(description='👤 设为工作人员（is_staff=True）', permissions=['change'])  # 修改此处
 def grant_staff(modeladmin, request, queryset):
     updated = queryset.update(is_staff=True)
     messages.success(request, f'已设为工作人员 {updated} 个用户')
 
 
-@admin.action(description='🚫 取消工作人员（is_staff=False）', permissions=['change', 'delete'])
+@admin.action(description='🚫 取消工作人员（is_staff=False）', permissions=['change'])  # 修改此处
 def revoke_staff(modeladmin, request, queryset):
     updated = queryset.update(is_staff=False)
     messages.success(request, f'已取消工作人员 {updated} 个用户')
 
 
-@admin.action(description='⭐ 设为超级用户（is_superuser=True）', permissions=['change', 'delete'])
+@admin.action(description='⭐ 设为超级用户（is_superuser=True）', permissions=['change'])  # 修改此处
 def grant_superuser(modeladmin, request, queryset):
     updated = queryset.update(is_superuser=True)
     messages.success(request, f'已设为超级用户 {updated} 个')
 
 
-@admin.action(description='⬇ 取消超级用户（is_superuser=False）', permissions=['change', 'delete'])
+@admin.action(description='⬇ 取消超级用户（is_superuser=False）', permissions=['change'])  # 修改此处
 def revoke_superuser(modeladmin, request, queryset):
     updated = queryset.update(is_superuser=False)
     messages.success(request, f'已取消超级用户 {updated} 个')
