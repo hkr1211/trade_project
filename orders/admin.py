@@ -1,4 +1,5 @@
 from django import forms
+import os
 from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
@@ -436,3 +437,8 @@ class UserAdmin(DjangoUserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
+# Admin site headers include build id to verify deployment
+admin.site.site_header = f"外贸系统管理后台（{os.environ.get('APP_BUILD_ID', 'local')}）"
+admin.site.site_title = "外贸系统管理后台"
+admin.site.index_title = "管理功能"

@@ -13,6 +13,7 @@ from django.db.utils import OperationalError
 from django.db import connection
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+import os
 
 from .models import Company, Contact, Inquiry, InquiryItem, InquiryAttachment, Order, OrderItem, OrderAttachment, Message, MessageAttachment
 from .forms import (
@@ -511,6 +512,18 @@ def health_storage(request):
         return JsonResponse({'default_file_storage': backend, 'url_example': sample_url})
     except Exception as e:
         return JsonResponse({'default_file_storage': backend, 'url_example': f'error: {str(e)}'})
+
+def health_version(request):
+    from django.conf import settings
+    data = {
+        'app_build_id': os.environ.get('APP_BUILD_ID', 'unset'),
+        'vercel': os.environ.get('VERCEL', 'unset'),
+        'vercel_commit_sha': os.environ.get('VERCEL_GIT_COMMIT_SHA', 'unset'),
+        'vercel_commit_ref': os.environ.get('VERCEL_GIT_COMMIT_REF', 'unset'),
+        'settings_module': os.environ.get('DJANGO_SETTINGS_MODULE', 'unset'),
+        'debug': bool(getattr(settings, 'DEBUG', False)),
+    }
+    return JsonResponse(data)
 
 
 # ==================== 我的询单列表 ====================

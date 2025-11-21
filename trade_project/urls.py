@@ -52,6 +52,7 @@ urlpatterns = [
     path('api/inquiry/<int:inquiry_id>/details/', views.get_inquiry_details, name='get_inquiry_details'),
     path('healthz/db', views.health_db, name='health_db'),
     path('healthz/storage', views.health_storage, name='health_storage'),
+    path('healthz/version', views.health_version, name='health_version'),
     # ...
 
 ]
