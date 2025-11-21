@@ -5,6 +5,7 @@ from django.utils.html import format_html
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.admin.actions import delete_selected
 from .models import (Company, Contact, Inquiry, InquiryItem, InquiryAttachment,
                      Order, OrderItem, OrderAttachment)
 
@@ -117,6 +118,9 @@ class ContactAdmin(admin.ModelAdmin):
                     'approval_status_display', 'has_login_account', 'is_primary', 'created_at']
     search_fields = ['name', 'email', 'company__company_name']
     list_filter = ['company', 'role', 'approval_status', 'is_primary', 'is_active']  # 添加 role 筛选
+    actions_on_top = True
+    actions_on_bottom = True
+    actions_selection_counter = True
     
     fieldsets = (
         ('基本信息', {
@@ -164,6 +168,7 @@ class ContactAdmin(admin.ModelAdmin):
             return format_html('<span style="color: orange; font-weight: bold;">⏳ 待审批</span>')
     approval_status_display.short_description = '审批状态'
     
+    @admin.action(description='✓ 批量批准选中的联系人', permissions=['change', 'delete'])
     def approve_contacts(self, request, queryset):
         """批量批准"""
         count = 0
@@ -183,6 +188,7 @@ class ContactAdmin(admin.ModelAdmin):
         self.message_user(request, f'成功批准 {count} 个买家账号。', messages.SUCCESS)
     approve_contacts.short_description = '✓ 批准选中的买家'
     
+    @admin.action(description='✗ 批量拒绝选中的联系人', permissions=['change', 'delete'])
     def reject_contacts(self, request, queryset):
         """批量拒绝"""
         count = 0
@@ -195,6 +201,7 @@ class ContactAdmin(admin.ModelAdmin):
         self.message_user(request, f'已拒绝 {count} 个买家账号。', messages.WARNING)
     reject_contacts.short_description = '✗ 拒绝选中的买家'
     
+    @admin.action(description='🔑 重置选中用户的密码', permissions=['change', 'delete'])
     def reset_password(self, request, queryset):
         """重置密码（生成临时密码）"""
         import random
@@ -376,37 +383,37 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 # ==================== 用户管理批量动作 ====================
-@admin.action(description='✓ 批量激活选中用户')
+@admin.action(description='✓ 批量激活选中用户', permissions=['change', 'delete'])
 def activate_users(modeladmin, request, queryset):
     updated = queryset.update(is_active=True)
     messages.success(request, f'已激活 {updated} 个用户')
 
 
-@admin.action(description='✗ 批量禁用选中用户')
+@admin.action(description='✗ 批量禁用选中用户', permissions=['change', 'delete'])
 def deactivate_users(modeladmin, request, queryset):
     updated = queryset.update(is_active=False)
     messages.success(request, f'已禁用 {updated} 个用户')
 
 
-@admin.action(description='👤 设为工作人员（is_staff=True）')
+@admin.action(description='👤 设为工作人员（is_staff=True）', permissions=['change', 'delete'])
 def grant_staff(modeladmin, request, queryset):
     updated = queryset.update(is_staff=True)
     messages.success(request, f'已设为工作人员 {updated} 个用户')
 
 
-@admin.action(description='🚫 取消工作人员（is_staff=False）')
+@admin.action(description='🚫 取消工作人员（is_staff=False）', permissions=['change', 'delete'])
 def revoke_staff(modeladmin, request, queryset):
     updated = queryset.update(is_staff=False)
     messages.success(request, f'已取消工作人员 {updated} 个用户')
 
 
-@admin.action(description='⭐ 设为超级用户（is_superuser=True）')
+@admin.action(description='⭐ 设为超级用户（is_superuser=True）', permissions=['change', 'delete'])
 def grant_superuser(modeladmin, request, queryset):
     updated = queryset.update(is_superuser=True)
     messages.success(request, f'已设为超级用户 {updated} 个')
 
 
-@admin.action(description='⬇ 取消超级用户（is_superuser=False）')
+@admin.action(description='⬇ 取消超级用户（is_superuser=False）', permissions=['change', 'delete'])
 def revoke_superuser(modeladmin, request, queryset):
     updated = queryset.update(is_superuser=False)
     messages.success(request, f'已取消超级用户 {updated} 个')
@@ -420,6 +427,7 @@ class UserAdmin(DjangoUserAdmin):
         revoke_staff,
         grant_superuser,
         revoke_superuser,
+        delete_selected,
     ]
     actions_on_top = True
     actions_on_bottom = True
