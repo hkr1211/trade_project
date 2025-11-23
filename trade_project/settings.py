@@ -150,7 +150,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise 配置
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# 注意：已禁用此配置，因为 CompressedManifestStaticFilesStorage 会破坏 Django admin 的 JavaScript
+# 使用底部的 STORAGES 配置代替（Django 4.2+）
 
 # 媒体文件配置（用户上传的文件）
 MEDIA_URL = '/media/'
@@ -232,13 +234,21 @@ LOGGING = {
     },
 }
 
+# ==================== STORAGES 配置（Django 4.2+）====================
 if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
     STORAGES = {
         'default': {
             'BACKEND': 'trade_project.storage_backends.SupabaseStorage'
         },
         'staticfiles': {
-            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'  # 修改：使用标准存储以避免破坏 admin JS
         }
     }
     MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定
+else:
+    # 默认配置：使用标准WhiteNoise（不压缩/哈希），以确保admin JS正常工作
+    STORAGES = {
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
+        }
+    }
