@@ -383,69 +383,48 @@ class OrderAdmin(admin.ModelAdmin):
             instance.save()
         formset.save_m2m()
 
-
-# ==================== 用户管理批量动作 ====================
-# 将 permissions=['change', 'delete'] 修改为 permissions=['change']
-
-@admin.action(description='✓ 批量激活选中用户')
-def activate_users(modeladmin, request, queryset):
-    updated = queryset.update(is_active=True)
-    messages.success(request, f'已激活 {updated} 个用户')
-
-
-@admin.action(description='✗ 批量禁用选中用户')
-def deactivate_users(modeladmin, request, queryset):
-    updated = queryset.update(is_active=False)
-    messages.success(request, f'已禁用 {updated} 个用户')
-
-
-@admin.action(description='👤 设为工作人员（is_staff=True）')
-def grant_staff(modeladmin, request, queryset):
-    updated = queryset.update(is_staff=True)
-    messages.success(request, f'已设为工作人员 {updated} 个用户')
-
-
-@admin.action(description='🚫 取消工作人员（is_staff=False）')
-def revoke_staff(modeladmin, request, queryset):
-    updated = queryset.update(is_staff=False)
-    messages.success(request, f'已取消工作人员 {updated} 个用户')
-
-
-@admin.action(description='⭐ 设为超级用户（is_superuser=True）')
-def grant_superuser(modeladmin, request, queryset):
-    updated = queryset.update(is_superuser=True)
-    messages.success(request, f'已设为超级用户 {updated} 个')
-
-
-@admin.action(description='⬇ 取消超级用户（is_superuser=False）')
-def revoke_superuser(modeladmin, request, queryset):
-    updated = queryset.update(is_superuser=False)
-    messages.success(request, f'已取消超级用户 {updated} 个')
-
-
-
-# ==================== User Admin Customization ====================
-
-# ==================== Admin Site Configuration ====================
-# Configure header first so it applies even if later code fails
-admin.site.site_header = f"外贸系统管理后台（{os.environ.get('APP_BUILD_ID', 'local')}）"
-admin.site.site_title = "外贸系统管理后台"
-admin.site.index_title = "管理功能"
-
-# ==================== User Admin Customization ====================
 class UserAdmin(DjangoUserAdmin):
+    list_display = DjangoUserAdmin.list_display + ('date_joined', 'last_login')
+    
     actions = [
-        activate_users,
-        deactivate_users,
-        grant_staff,
-        revoke_staff,
-        grant_superuser,
-        revoke_superuser,
-        delete_selected,
+        'activate_users',
+        'deactivate_users',
+        'grant_staff',
+        'revoke_staff',
+        'grant_superuser',
+        'revoke_superuser',
+        # delete_selected is available by default
     ]
-    actions_on_top = True
-    actions_on_bottom = True
-    actions_selection_counter = True
+    
+    @admin.action(description='✓ 批量激活选中用户')
+    def activate_users(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f'已激活 {updated} 个用户', messages.SUCCESS)
+
+    @admin.action(description='✗ 批量禁用选中用户')
+    def deactivate_users(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f'已禁用 {updated} 个用户', messages.WARNING)
+
+    @admin.action(description='👤 设为工作人员（is_staff=True）')
+    def grant_staff(self, request, queryset):
+        updated = queryset.update(is_staff=True)
+        self.message_user(request, f'已设为工作人员 {updated} 个用户', messages.SUCCESS)
+
+    @admin.action(description='🚫 取消工作人员（is_staff=False）')
+    def revoke_staff(self, request, queryset):
+        updated = queryset.update(is_staff=False)
+        self.message_user(request, f'已取消工作人员 {updated} 个用户', messages.WARNING)
+
+    @admin.action(description='⭐ 设为超级用户（is_superuser=True）')
+    def grant_superuser(self, request, queryset):
+        updated = queryset.update(is_superuser=True)
+        self.message_user(request, f'已设为超级用户 {updated} 个', messages.SUCCESS)
+
+    @admin.action(description='⬇ 取消超级用户（is_superuser=False）')
+    def revoke_superuser(self, request, queryset):
+        updated = queryset.update(is_superuser=False)
+        self.message_user(request, f'已取消超级用户 {updated} 个', messages.WARNING)
 
 # Safely unregister and re-register User
 try:
@@ -453,5 +432,17 @@ try:
         admin.site.unregister(User)
     admin.site.register(User, UserAdmin)
 except Exception as e:
-    print(f"Error registering UserAdmin: {e}")
+    # Log the error but don't crash
+    print(f"CRITICAL ERROR registering UserAdmin: {e}")
+    # Fallback: try to register anyway if it wasn't registered
+    try:
+        admin.site.register(User, UserAdmin)
+    except Exception:
+        pass
 
+
+# ==================== Admin Site Configuration ====================
+# Configure header first so it applies even if later code fails
+admin.site.site_header = f"外贸系统管理后台（{os.environ.get('APP_BUILD_ID', 'local')}）"
+admin.site.site_title = "外贸系统管理后台"
+admin.site.index_title = "管理功能"
