@@ -28,10 +28,9 @@
       "src": "/(.*)",
       "dest": "server.py"
     }
-    #{
-    #  "src": "/(.*)",
-    #  "dest": "trade_project/wsgi.py"
-    #
+    {
+      "src": "/(.*)",
+      "dest": "trade_project/wsgi.py"
     }
   ],
   "buildCommand": "pybabel compile -d locale && pip install -r requirements.txt && python manage.py collectstatic --noinput"
