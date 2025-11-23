@@ -20,6 +20,11 @@ if User in admin.site._registry:
     if isinstance(registered_admin, UserAdmin):
         print("SUCCESS: Custom UserAdmin is active.")
         print(f"Actions: {registered_admin.actions}")
+        print(f"List Display: {registered_admin.list_display}")
+        
+        # Verify permissions on actions
+        if hasattr(registered_admin, 'activate_users'):
+            print(f"activate_users permissions: {getattr(registered_admin.activate_users, 'permissions', 'None')}")
     else:
         print("FAILURE: Default or other UserAdmin is active.")
 else:
