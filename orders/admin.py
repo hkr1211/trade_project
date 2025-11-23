@@ -174,7 +174,7 @@ class ContactAdmin(admin.ModelAdmin):
             return format_html('<span style="color: orange; font-weight: bold;">⏳ 待审批</span>')
     approval_status_display.short_description = '审批状态'
     
-    @admin.action(description='✓ 批量批准选中的联系人', permissions=['change', 'delete'])
+    @admin.action(description='✓ 批量批准选中的联系人')
     def approve_contacts(self, request, queryset):
         """批量批准"""
         count = 0
@@ -194,7 +194,7 @@ class ContactAdmin(admin.ModelAdmin):
         self.message_user(request, f'成功批准 {count} 个买家账号。', messages.SUCCESS)
     approve_contacts.short_description = '✓ 批准选中的买家'
     
-    @admin.action(description='✗ 批量拒绝选中的联系人', permissions=['change', 'delete'])
+    @admin.action(description='✗ 批量拒绝选中的联系人')
     def reject_contacts(self, request, queryset):
         """批量拒绝"""
         count = 0
@@ -207,7 +207,7 @@ class ContactAdmin(admin.ModelAdmin):
         self.message_user(request, f'已拒绝 {count} 个买家账号。', messages.WARNING)
     reject_contacts.short_description = '✗ 拒绝选中的买家'
     
-    @admin.action(description='🔑 重置选中用户的密码', permissions=['change', 'delete'])
+    @admin.action(description='🔑 重置选中用户的密码')
     def reset_password(self, request, queryset):
         """重置密码（生成临时密码）"""
         import random
