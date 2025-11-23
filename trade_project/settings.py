@@ -150,7 +150,13 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise 配置
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# 额外静态目录（如存在项目级 static）
+STATICFILES_DIRS = []
+project_static_dir = BASE_DIR / 'static'
+if project_static_dir.exists():
+    STATICFILES_DIRS.append(project_static_dir)
 # ⚠️ 已禁用：此配置会覆盖下方的 STORAGES 设置，导致静态文件无法正确服务
 # 注意：已禁用此配置，因为 CompressedManifestStaticFilesStorage 会破坏 Django admin 的 JavaScript
 # 使用底部的 STORAGES 配置代替（Django 4.2+）
