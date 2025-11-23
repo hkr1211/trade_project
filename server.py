@@ -4,8 +4,6 @@ from django.core.management import call_command
 from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trade_project.settings')
-
-app = get_wsgi_application()
 if os.environ.get('RUN_MIGRATIONS_ON_START', 'false').lower() == 'true':
     flag_path = '/tmp/django_migrated'
     try:
@@ -34,5 +32,6 @@ try:
             with open(static_flag, 'w') as f:
                 f.write('ok')
 except Exception:
-    # 若收集失败，不影响应用启动；但可能导致生产缺少静态资源
     pass
+
+app = get_wsgi_application()
