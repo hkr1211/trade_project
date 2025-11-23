@@ -8,10 +8,6 @@
       }
     },
     {
-      "src": "server.py",
-      "use": "@vercel/python"
-    },
-    {
       "src": "run_migrate.py",
       "use": "@vercel/python",
       "config": {
@@ -26,7 +22,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "server.py"
+      "dest": "trade_project/wsgi.py"
     }
   ],
   "buildCommand": "pybabel compile -d locale && pip install -r requirements.txt && python manage.py collectstatic --noinput"
