@@ -22,6 +22,8 @@ ALLOWED_HOSTS = [
     '192.168.1.209',
     '.vercel.app',
     '.supabase.co',
+    'trade.yj-ql.com',         # ⚠️ 建议明确添加
+    'trade-project-zeta.vercel.app',  # ⚠️ 建议明确添加
 ]
 
 # 如果在生产环境，添加实际域名
