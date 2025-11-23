@@ -32,3 +32,5 @@ else:
 
 # Check site header
 print(f"Site Header: {admin.site.site_header}")
+# Note: The header is now set in orders/apps.py, so it should be "DEBUG 3 ..."
+
