@@ -102,7 +102,7 @@ class ContactInline(admin.StackedInline):  # 改为 StackedInline 以显示更�
 # ==================== 公司管理 ====================
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ['company_name', 'country', 'contact_count', 'created_at']
+    list_display = ['company_name', 'country', 'contact_count', 'debug_info', 'created_at']
     search_fields = ['company_name']
     list_filter = ['country', 'is_active']
     inlines = [ContactInline]
@@ -110,6 +110,10 @@ class CompanyAdmin(admin.ModelAdmin):
     def contact_count(self, obj):
         return obj.contacts.count()
     contact_count.short_description = '联系人数'
+
+    def debug_info(self, obj):
+        return "DEPLOYED"
+    debug_info.short_description = "DEBUG CHECK"
 
 
 # ==================== 联系人管理（独立页面） ====================
