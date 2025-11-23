@@ -147,7 +147,7 @@ LOCALE_PATHS = [
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.environ.get('STATIC_ROOT', str(BASE_DIR / 'staticfiles'))
 
 # WhiteNoise 配置
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -170,8 +170,7 @@ if os.environ.get('VERCEL'):
         os.makedirs(MEDIA_ROOT, exist_ok=True)
     except Exception:
         pass
-    # 在无服务器环境使用临时目录存放静态文件并在启动时收集
-    STATIC_ROOT = '/tmp/staticfiles'
+    STATIC_ROOT = os.environ.get('STATIC_ROOT', '/tmp/staticfiles')
     try:
         os.makedirs(STATIC_ROOT, exist_ok=True)
     except Exception:
