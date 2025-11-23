@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.admin import sites
 from django.contrib.admin.actions import delete_selected
 from .models import (Company, Contact, Inquiry, InquiryItem, InquiryAttachment,
                      Order, OrderItem, OrderAttachment)
@@ -422,6 +423,8 @@ def revoke_superuser(modeladmin, request, queryset):
     messages.success(request, f'已取消超级用户 {updated} 个')
 
 
+
+# ==================== User Admin Customization ====================
 class UserAdmin(DjangoUserAdmin):
     actions = [
         activate_users,
@@ -436,11 +439,15 @@ class UserAdmin(DjangoUserAdmin):
     actions_on_bottom = True
     actions_selection_counter = True
 
+# Safely unregister and re-register User
+try:
+    admin.site.unregister(User)
+except sites.NotRegistered:
+    pass
 
-admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
-# Admin site headers include build id to verify deployment
+# ==================== Admin Site Configuration ====================
 admin.site.site_header = f"外贸系统管理后台（{os.environ.get('APP_BUILD_ID', 'local')}）"
 admin.site.site_title = "外贸系统管理后台"
 admin.site.index_title = "管理功能"
