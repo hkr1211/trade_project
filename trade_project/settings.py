@@ -242,20 +242,21 @@ LOGGING = {
 }
 
 # ==================== STORAGES 配置（Django 4.2+）====================
+# 使用基础StaticFilesStorage避免manifest相关的500错误
 if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
     STORAGES = {
         'default': {
             'BACKEND': 'trade_project.storage_backends.SupabaseStorage'
         },
         'staticfiles': {
-            'BACKEND': 'whitenoise.storage.ManifestStaticFilesStorage'  # 使用WhiteNoise但不压缩
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
         }
     }
-    MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定
+    MEDIA_URL = "/media/"
 else:
-    # 默认配置：使用WhiteNoise的ManifestStaticFilesStorage（不压缩，保留哈希）
+    # 本地开发：使用标准存储
     STORAGES = {
         'staticfiles': {
-            'BACKEND': 'whitenoise.storage.ManifestStaticFilesStorage'
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
         }
     }
