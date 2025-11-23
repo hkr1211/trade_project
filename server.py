@@ -19,3 +19,14 @@ if os.environ.get('RUN_MIGRATIONS_ON_START', 'false').lower() == 'true':
                 f.write('err')
         except Exception:
             pass
+
+# 收集静态文件（用于 Vercel 无服务器环境）
+try:
+    static_flag = '/tmp/django_static_collected'
+    if os.environ.get('VERCEL') and not os.path.exists(static_flag):
+        call_command('collectstatic', interactive=False, verbosity=0)
+        with open(static_flag, 'w') as f:
+            f.write('ok')
+except Exception:
+    # 若收集失败，不影响应用启动；但可能导致生产缺少静态资源
+    pass

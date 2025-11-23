@@ -151,6 +151,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise 配置
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# ⚠️ 已禁用：此配置会覆盖下方的 STORAGES 设置，导致静态文件无法正确服务
 # 注意：已禁用此配置，因为 CompressedManifestStaticFilesStorage 会破坏 Django admin 的 JavaScript
 # 使用底部的 STORAGES 配置代替（Django 4.2+）
 
@@ -161,6 +162,12 @@ if os.environ.get('VERCEL'):
     MEDIA_ROOT = '/tmp/media'
     try:
         os.makedirs(MEDIA_ROOT, exist_ok=True)
+    except Exception:
+        pass
+    # 在无服务器环境使用临时目录存放静态文件并在启动时收集
+    STATIC_ROOT = '/tmp/staticfiles'
+    try:
+        os.makedirs(STATIC_ROOT, exist_ok=True)
     except Exception:
         pass
 
@@ -241,14 +248,14 @@ if os.environ.get('SUPABASE_SERVICE_KEY') and os.environ.get('SUPABASE_URL'):
             'BACKEND': 'trade_project.storage_backends.SupabaseStorage'
         },
         'staticfiles': {
-            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'  # 修改：使用标准存储以避免破坏 admin JS
+            'BACKEND': 'whitenoise.storage.ManifestStaticFilesStorage'  # 使用WhiteNoise但不压缩
         }
     }
     MEDIA_URL = "/media/"  # 不重要，真正的 URL 由 storage backend 决定
 else:
-    # 默认配置：使用标准WhiteNoise（不压缩/哈希），以确保admin JS正常工作
+    # 默认配置：使用WhiteNoise的ManifestStaticFilesStorage（不压缩，保留哈希）
     STORAGES = {
         'staticfiles': {
-            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
+            'BACKEND': 'whitenoise.storage.ManifestStaticFilesStorage'
         }
     }
