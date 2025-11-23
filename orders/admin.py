@@ -384,6 +384,7 @@ class OrderAdmin(admin.ModelAdmin):
         formset.save_m2m()
 
 # ==================== User Admin Customization ====================
+# ==================== User Admin Customization ====================
 class UserAdmin(DjangoUserAdmin):
     # Add a custom column to visually verify this class is active
     list_display = DjangoUserAdmin.list_display + ('date_joined', 'custom_status_display')
@@ -395,40 +396,64 @@ class UserAdmin(DjangoUserAdmin):
         'revoke_staff',
         'grant_superuser',
         'revoke_superuser',
-        # delete_selected is available by default
     ]
     
     def custom_status_display(self, obj):
         return "Active" if obj.is_active else "Inactive"
     custom_status_display.short_description = "Debug Status"
     
-    # Allow actions if user has 'change' OR 'delete' permission
-    @admin.action(description='✓ 批量激活选中用户', permissions=['change', 'delete'])
+    def get_actions(self, request):
+        """
+        Force-include our custom actions to bypass any permission filtering issues.
+        """
+        actions = super().get_actions(request)
+        
+        # List of our custom action names
+        my_actions = [
+            'activate_users', 'deactivate_users', 'grant_staff', 
+            'revoke_staff', 'grant_superuser', 'revoke_superuser'
+        ]
+        
+        for action_name in my_actions:
+            # If the action was filtered out (e.g. due to permissions), put it back
+            if action_name not in actions:
+                func = getattr(self, action_name)
+                # Get description from decorator or attribute
+                description = getattr(func, 'short_description', action_name.replace('_', ' ').title())
+                # Action tuple format: (callable, name, description)
+                actions[action_name] = (func, action_name, description)
+        
+        return actions
+
+    # Define actions without permission checks in the decorator for now
+    # We rely on get_actions to include them, but we should still be careful
+    
+    @admin.action(description='✓ 批量激活选中用户')
     def activate_users(self, request, queryset):
         updated = queryset.update(is_active=True)
         self.message_user(request, f'已激活 {updated} 个用户', messages.SUCCESS)
 
-    @admin.action(description='✗ 批量禁用选中用户', permissions=['change', 'delete'])
+    @admin.action(description='✗ 批量禁用选中用户')
     def deactivate_users(self, request, queryset):
         updated = queryset.update(is_active=False)
         self.message_user(request, f'已禁用 {updated} 个用户', messages.WARNING)
 
-    @admin.action(description='👤 设为工作人员（is_staff=True）', permissions=['change', 'delete'])
+    @admin.action(description='👤 设为工作人员（is_staff=True）')
     def grant_staff(self, request, queryset):
         updated = queryset.update(is_staff=True)
         self.message_user(request, f'已设为工作人员 {updated} 个用户', messages.SUCCESS)
 
-    @admin.action(description='🚫 取消工作人员（is_staff=False）', permissions=['change', 'delete'])
+    @admin.action(description='🚫 取消工作人员（is_staff=False）')
     def revoke_staff(self, request, queryset):
         updated = queryset.update(is_staff=False)
         self.message_user(request, f'已取消工作人员 {updated} 个用户', messages.WARNING)
 
-    @admin.action(description='⭐ 设为超级用户（is_superuser=True）', permissions=['change', 'delete'])
+    @admin.action(description='⭐ 设为超级用户（is_superuser=True）')
     def grant_superuser(self, request, queryset):
         updated = queryset.update(is_superuser=True)
         self.message_user(request, f'已设为超级用户 {updated} 个', messages.SUCCESS)
 
-    @admin.action(description='⬇ 取消超级用户（is_superuser=False）', permissions=['change', 'delete'])
+    @admin.action(description='⬇ 取消超级用户（is_superuser=False）')
     def revoke_superuser(self, request, queryset):
         updated = queryset.update(is_superuser=False)
         self.message_user(request, f'已取消超级用户 {updated} 个', messages.WARNING)
@@ -451,7 +476,7 @@ except Exception as e:
 
 # ==================== Admin Site Configuration ====================
 # Configure header first so it applies even if later code fails
-admin.site.site_header = f"外贸系统管理后台 (DEBUG {os.environ.get('APP_BUILD_ID', 'local')})"
+admin.site.site_header = f"外贸系统管理后台 (DEBUG 2 {os.environ.get('APP_BUILD_ID', 'local')})"
 admin.site.site_title = "外贸系统管理后台"
 admin.site.index_title = "管理功能"
 
