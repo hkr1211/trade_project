@@ -425,6 +425,14 @@ def revoke_superuser(modeladmin, request, queryset):
 
 
 # ==================== User Admin Customization ====================
+
+# ==================== Admin Site Configuration ====================
+# Configure header first so it applies even if later code fails
+admin.site.site_header = f"外贸系统管理后台（{os.environ.get('APP_BUILD_ID', 'local')}）"
+admin.site.site_title = "外贸系统管理后台"
+admin.site.index_title = "管理功能"
+
+# ==================== User Admin Customization ====================
 class UserAdmin(DjangoUserAdmin):
     actions = [
         activate_users,
@@ -441,13 +449,9 @@ class UserAdmin(DjangoUserAdmin):
 
 # Safely unregister and re-register User
 try:
-    admin.site.unregister(User)
-except sites.NotRegistered:
-    pass
+    if User in admin.site._registry:
+        admin.site.unregister(User)
+    admin.site.register(User, UserAdmin)
+except Exception as e:
+    print(f"Error registering UserAdmin: {e}")
 
-admin.site.register(User, UserAdmin)
-
-# ==================== Admin Site Configuration ====================
-admin.site.site_header = f"外贸系统管理后台（{os.environ.get('APP_BUILD_ID', 'local')}）"
-admin.site.site_title = "外贸系统管理后台"
-admin.site.index_title = "管理功能"
