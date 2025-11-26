@@ -209,7 +209,6 @@ def supplier_inquiry_list(request):
 @login_required
 def supplier_inquiry_detail(request, inquiry_id):
     """供应商查看询单详情并进行报价"""
-    return HttpResponse("HELLO WORLD - DEBUGGING")
     try:
         try:
             contact = Contact.objects.get(user=request.user, role='supplier')
