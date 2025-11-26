@@ -434,8 +434,32 @@ class UserAdmin(DjangoUserAdmin):
     
     @admin.action(description='✓ 批量激活选中用户')
     def activate_users(self, request, queryset):
-        updated = queryset.update(is_active=True)
-        self.message_user(request, f'已激活 {updated} 个用户', messages.SUCCESS)
+        # updated = queryset.update(is_active=True)
+        # self.message_user(request, f'已激活 {updated} 个用户', messages.SUCCESS)
+        
+        count = 0
+        for user in queryset:
+            # 激活用户
+            if not user.is_active:
+                user.is_active = True
+                user.save()
+                count += 1
+            
+            # 尝试查找并批准关联的 Contact
+            try:
+                # 检查是否有 Contact 关联 (反向查询默认是 contact)
+                if hasattr(user, 'contact'):
+                    contact = user.contact
+                    if contact.approval_status != 'approved':
+                        contact.approval_status = 'approved'
+                        contact.approved_at = timezone.now()
+                        contact.approved_by = request.user
+                        contact.save()
+            except Exception as e:
+                # 记录错误但不中断循环
+                print(f"Error activating contact for user {user.username}: {e}")
+                
+        self.message_user(request, f'已激活 {count} 个用户并批准关联账号', messages.SUCCESS)
 
     @admin.action(description='✗ 批量禁用选中用户')
     def deactivate_users(self, request, queryset):
