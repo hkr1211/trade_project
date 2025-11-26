@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 {% load i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE|default:'zh-hans' }}">
@@ -41,62 +41,62 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                    {% if request.user.contact.role == 'buyer' %}
-                    <!-- 买家导航 -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'buyer_dashboard' %}">{% trans "首页" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inquiry_list' %}">{% trans "我的询单" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'order_list' %}">{% trans "我的订单" %}</a>
-                    </li>
-                    {% elif request.user.contact.role == 'supplier' %}
-                    <!-- 供应商导航 -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'supplier_dashboard' %}">{% trans "首页" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'supplier_inquiry_list' %}">{% trans "询单管理" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'supplier_order_list' %}">{% trans "订单管理" %}</a>
-                    </li>
-                    {% endif %}
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            {{ user.email }}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'buyer_logout' %}">{% trans "退出登录" %}</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <!-- 未登录导航 -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="buyerDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            {% trans "买家入口" %}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'buyer_login' %}">{% trans "买家登录" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'buyer_register' %}">{% trans "买家注册" %}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="supplierDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            {% trans "供应商入口" %}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'supplier_login' %}">{% trans "供应商登录" %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'supplier_register' %}">{% trans "供应商注册" %}</a>
+                        {% if request.user.contact.role == 'buyer' %}
+                            <!-- 买家导航 -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'buyer_dashboard' %}">{% trans "首页" %}</a>
                             </li>
-                        </ul>
-                    </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'inquiry_list' %}">{% trans "我的询单" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'order_list' %}">{% trans "我的订单" %}</a>
+                            </li>
+                        {% elif request.user.contact.role == 'supplier' %}
+                            <!-- 供应商导航 -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'supplier_dashboard' %}">{% trans "首页" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'supplier_inquiry_list' %}">{% trans "询单管理" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'supplier_order_list' %}">{% trans "订单管理" %}</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                {{ user.email }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'buyer_logout' %}">{% trans "退出登录" %}</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <!-- 未登录导航 -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="buyerDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                {% trans "买家入口" %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'buyer_login' %}">{% trans "买家登录" %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'buyer_register' %}">{% trans "买家注册" %}</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="supplierDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                {% trans "供应商入口" %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'supplier_login' %}">{% trans "供应商登录" %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'supplier_register' %}">{% trans "供应商注册" %}</a>
+                                </li>
+                            </ul>
+                        </li>
                     {% endif %}
                     <!-- 语言切换器 -->
                     <li class="nav-item ms-2">
@@ -104,11 +104,9 @@
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.get_full_path }}">
                             <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="zh-hans" {% if LANGUAGE_CODE=='zh-hans' %}selected{% endif %}>{% trans
-                                    "中文" %}</option>
-                                <option value="en" {% if LANGUAGE_CODE=='en' %}selected{% endif %}>English</option>
-                                <option value="ja" {% if LANGUAGE_CODE=='ja' %}selected{% endif %}>{% trans "日本語" %}
-                                </option>
+                                <option value="zh-hans" {% if LANGUAGE_CODE == "zh-hans" %}selected{% endif %}>{% trans "中文" %}</option>
+                                <option value="en" {% if LANGUAGE_CODE == "en" %}selected{% endif %}>English</option>
+                                <option value="ja" {% if LANGUAGE_CODE == "ja" %}selected{% endif %}>{% trans "日本語" %}</option>
                             </select>
                         </form>
                     </li>
@@ -137,7 +135,7 @@
     <!-- 页脚 -->
     <footer class="bg-light py-4 mt-5">
         <div class="container text-center">
-            <p class="mb-0">{% trans "© 2024 宝鸡蕴杰金属制品有限公司. All rights reserved." %}</p>
+            <p class="mb-0">{% trans " 2024 宝鸡蕴杰金属制品有限公司. All rights reserved." %}</p>
         </div>
     </footer>
 
