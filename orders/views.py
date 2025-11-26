@@ -215,43 +215,47 @@ def supplier_inquiry_detail(request, inquiry_id):
         messages.error(request, _('您不是供应商账号。'))
         return redirect('home')
     
-    inquiry = get_object_or_404(Inquiry, id=inquiry_id)
-    
-    # POST 请求：提交报价
-    if request.method == 'POST':
-        try:
-            with transaction.atomic():
-                # 销售锁定规则：一旦已有 quoted_by，则仅允许该销售继续操作
-                if inquiry.quoted_by and inquiry.quoted_by != request.user:
-                    messages.error(request, f'该询单已由销售 {inquiry.quoted_by.get_full_name() or inquiry.quoted_by.username} 负责，请联系其处理。')
-                    return redirect('supplier_inquiry_detail', inquiry_id=inquiry.id)
+    try:
+        inquiry = get_object_or_404(Inquiry, id=inquiry_id)
+        
+        # POST 请求：提交报价
+        if request.method == 'POST':
+            try:
+                with transaction.atomic():
+                    # 销售锁定规则：一旦已有 quoted_by，则仅允许该销售继续操作
+                    if inquiry.quoted_by and inquiry.quoted_by != request.user:
+                        messages.error(request, f'该询单已由销售 {inquiry.quoted_by.get_full_name() or inquiry.quoted_by.username} 负责，请联系其处理。')
+                        return redirect('supplier_inquiry_detail', inquiry_id=inquiry.id)
 
-                # 更新询单状态和报价信息
-                inquiry.quoted_lead_time = request.POST.get('quoted_lead_time', '')
-                inquiry.supplier_notes = request.POST.get('supplier_notes', '')
-                inquiry.status = 'quoted'
-                inquiry.quoted_at = timezone.now()
-                # 初次报价时锁定负责销售；若已锁定则不覆盖
-                if not inquiry.quoted_by:
-                    inquiry.quoted_by = request.user
-                inquiry.save()
-                
-                # 更新每个产品的报价
-                for item in inquiry.items.all():
-                    quoted_price = request.POST.get(f'item_{item.id}_price')
-                    if quoted_price:
-                        item.quoted_price = quoted_price
-                        item.save()
-                
-            messages.success(request, _('询单 %(inquiry_number)s 报价成功！') % {'inquiry_number': inquiry.inquiry_number})
-            return redirect('supplier_inquiry_detail', inquiry_id=inquiry.id)
-        except Exception as e:
-            messages.error(request, _('报价失败：%(error)s') % {'error': str(e)})
-    
-    return render(request, 'orders/supplier_inquiry_detail.html', {
-        'contact': contact,
-        'inquiry': inquiry
-    })
+                    # 更新询单状态和报价信息
+                    inquiry.quoted_lead_time = request.POST.get('quoted_lead_time', '')
+                    inquiry.supplier_notes = request.POST.get('supplier_notes', '')
+                    inquiry.status = 'quoted'
+                    inquiry.quoted_at = timezone.now()
+                    # 初次报价时锁定负责销售；若已锁定则不覆盖
+                    if not inquiry.quoted_by:
+                        inquiry.quoted_by = request.user
+                    inquiry.save()
+                    
+                    # 更新每个产品的报价
+                    for item in inquiry.items.all():
+                        quoted_price = request.POST.get(f'item_{item.id}_price')
+                        if quoted_price:
+                            item.quoted_price = quoted_price
+                            item.save()
+                    
+                messages.success(request, _('询单 %(inquiry_number)s 报价成功！') % {'inquiry_number': inquiry.inquiry_number})
+                return redirect('supplier_inquiry_detail', inquiry_id=inquiry.id)
+            except Exception as e:
+                messages.error(request, _('报价失败：%(error)s') % {'error': str(e)})
+        
+        return render(request, 'orders/supplier_inquiry_detail.html', {
+            'contact': contact,
+            'inquiry': inquiry
+        })
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"Error: {str(e)}<br><pre>{traceback.format_exc()}</pre>")
 
 
 # ==================== Supplier 查看所有订单 ====================

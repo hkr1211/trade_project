@@ -103,9 +103,14 @@ def reproduce():
     # Test Case 5: Message with attachment
     print("\nTest Case 5: Message with attachment")
     from orders.models import MessageAttachment
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    
     request.user = supplier_user
     msg = Message.objects.create(inquiry=inquiry, sender=supplier_user, content="Attachment test")
-    att = MessageAttachment.objects.create(message=msg, file='test_att.txt')
+    
+    # Create a dummy file
+    dummy_file = SimpleUploadedFile("test_att.txt", b"file_content")
+    att = MessageAttachment.objects.create(message=msg, file=dummy_file)
     
     try:
         response = supplier_inquiry_detail(request, inquiry.id)
@@ -118,7 +123,9 @@ def reproduce():
     # Test Case 6: Inquiry with attachment
     print("\nTest Case 6: Inquiry with attachment")
     from orders.models import InquiryAttachment
-    inq_att = InquiryAttachment.objects.create(inquiry=inquiry, file='test_inq_att.txt')
+    
+    dummy_inq_file = SimpleUploadedFile("test_inq_att.txt", b"file_content")
+    inq_att = InquiryAttachment.objects.create(inquiry=inquiry, file=dummy_inq_file)
     
     try:
         response = supplier_inquiry_detail(request, inquiry.id)

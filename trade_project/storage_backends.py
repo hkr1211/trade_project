@@ -63,3 +63,15 @@ class SupabaseStorage(Storage):
         name = self._sanitize_key(name)
         encoded = quote(name, safe='/')
         return f"{self._base}/storage/v1/object/public/{self._bucket}/{encoded}"
+
+    def size(self, name):
+        try:
+            name = self._normalize_path(name)
+            url = self.url(name)
+            with httpx.Client(timeout=10) as client:
+                r = client.head(url)
+            if r.status_code == 200:
+                return int(r.headers.get('Content-Length', 0))
+            return 0
+        except Exception:
+            return 0
