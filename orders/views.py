@@ -210,12 +210,12 @@ def supplier_inquiry_list(request):
 def supplier_inquiry_detail(request, inquiry_id):
     """供应商查看询单详情并进行报价"""
     try:
-        contact = Contact.objects.get(user=request.user, role='supplier')
-    except Contact.DoesNotExist:
-        messages.error(request, _('您不是供应商账号。'))
-        return redirect('home')
-    
-    try:
+        try:
+            contact = Contact.objects.get(user=request.user, role='supplier')
+        except Contact.DoesNotExist:
+            messages.error(request, _('您不是供应商账号。'))
+            return redirect('home')
+        
         inquiry = get_object_or_404(Inquiry, id=inquiry_id)
         
         # POST 请求：提交报价
@@ -255,7 +255,7 @@ def supplier_inquiry_detail(request, inquiry_id):
         })
     except Exception as e:
         import traceback
-        return HttpResponse(f"Error: {str(e)}<br><pre>{traceback.format_exc()}</pre>")
+        return HttpResponse(f"Error in view: {str(e)}<br><pre>{traceback.format_exc()}</pre>")
 
 
 # ==================== Supplier 查看所有订单 ====================
